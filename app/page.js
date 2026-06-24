@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 const PROFESSORS = [
   { id: "software", name: "Dr. López", subject: "Programación" },
@@ -10,7 +10,6 @@ const PROFESSORS = [
 ];
 
 export default function Home() {
-  const [role, setRole] = useState(null);
   const [view, setView] = useState("login");
   const [user, setUser] = useState({ name: "", role: "" });
 
@@ -94,6 +93,37 @@ function TeacherDashboard({ user, onLogout }) {
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [activeTab, setActiveTab] = useState("content");
+  const [fileName, setFileName] = useState("");
+  const [results, setResults] = useState([]);
+  const [savedContentList, setSavedContentList] = useState([]);
+  const fileInputRef = useRef(null);
+
+  const loadResults = useCallback(async () => {
+    try {
+      const res = await fetch("/api/results");
+      const data = await res.json();
+      setResults(data);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === "results") loadResults();
+  }, [activeTab, loadResults]);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (ev) => setContent(ev.target.result);
+    reader.readAsText(file);
+  };
+
+  const saveContent = () => {
+    if (!topic.trim() || !content.trim()) return;
+    setSavedContentList([...savedContentList, { topic, content, date: new Date().toLocaleString() }]);
+    alert(`Contenido "${topic}" guardado correctamente.`);
+  };
 
   const generateQuiz = async () => {
     if (!content.trim() || !topic.trim()) return;
@@ -150,6 +180,7 @@ function TeacherDashboard({ user, onLogout }) {
             { id: "content", label: "Subir Contenido" },
             { id: "quiz", label: "Generar Quiz" },
             { id: "chat", label: "Chatbot" },
+            { id: "results", label: "Resultados" },
           ].map((tab) => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex-1 py-2 rounded-md text-sm font-medium transition ${activeTab === tab.id ? "bg-indigo-600 text-white" : "text-gray-500 hover:text-indigo-600"}`}>{tab.label}</button>
           ))}
@@ -164,10 +195,29 @@ function TeacherDashboard({ user, onLogout }) {
                 <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" placeholder="Ej: Introducción a Python" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">Contenido</label>
-                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={8} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none resize-y" placeholder="Escribe o pega el contenido educativo aquí..." />
+                <label className="block text-sm font-medium text-gray-600 mb-1">Archivo (.txt)</label>
+                <div className="flex gap-2 items-center">
+                  <input ref={fileInputRef} type="file" accept=".txt" onChange={handleFileUpload} className="hidden" />
+                  <button onClick={() => fileInputRef.current?.click()} className="border border-gray-300 px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition">Seleccionar archivo</button>
+                  {fileName && <span className="text-sm text-gray-500">{fileName}</span>}
+                </div>
               </div>
-              <button onClick={() => alert("Contenido guardado. Ve a la pestaña Generar Quiz para crear un cuestionario.")} className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition">Guardar Contenido</button>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Contenido</label>
+                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={8} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none resize-y" placeholder="Escribe, pega o sube un archivo .txt con el contenido educativo..." />
+              </div>
+              <button onClick={saveContent} className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition">Guardar Contenido</button>
+              {savedContentList.length > 0 && (
+                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                  <p className="text-sm font-medium text-gray-600 mb-2">Contenidos guardados:</p>
+                  {savedContentList.map((item, i) => (
+                    <div key={i} className="flex justify-between items-center py-1 text-sm">
+                      <span className="text-gray-700">{item.topic}</span>
+                      <span className="text-gray-400 text-xs">{item.date}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -221,12 +271,40 @@ function TeacherDashboard({ user, onLogout }) {
             </form>
           </div>
         )}
+
+        {activeTab === "results" && (
+          <div className="bg-white rounded-xl shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Resultados de Quizzes</h2>
+            {results.length === 0 ? (
+              <p className="text-gray-400 text-center py-8">No hay resultados aún. Los alumnos deben completar quizzes para ver sus resultados aquí.</p>
+            ) : (
+              <div className="space-y-4">
+                {results.toReversed().map((r) => (
+                  <div key={r.id} className="border rounded-lg p-4 hover:bg-gray-50 transition">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <span className="font-semibold text-gray-800">{r.studentName}</span>
+                        <span className="text-gray-400 mx-2">|</span>
+                        <span className="text-indigo-600 font-medium">{r.topic}</span>
+                      </div>
+                      <span className="text-xs text-gray-400">{r.submittedAt}</span>
+                    </div>
+                    <div className="flex gap-4 text-sm">
+                      <span className="text-green-600 font-semibold">{r.score}/{r.total} correctas</span>
+                      <span className="text-gray-500">({Math.round((r.score / r.total) * 100)}%)</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-function QuizView({ questions }) {
+function QuizView({ questions, studentName, topic, onSubmitted }) {
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -240,6 +318,26 @@ function QuizView({ questions }) {
   const correctCount = submitted
     ? questions.filter((q, i) => answers[i] === q.correctIndex).length
     : 0;
+
+  const handleSubmit = async () => {
+    const count = questions.filter((q, i) => answers[i] === q.correctIndex).length;
+    setSubmitted(true);
+    if (studentName && topic && onSubmitted) {
+      try {
+        await fetch("/api/results", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            studentName,
+            topic,
+            score: count,
+            total: questions.length,
+          }),
+        });
+        onSubmitted();
+      } catch {}
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -260,7 +358,7 @@ function QuizView({ questions }) {
       ))}
 
       {!submitted && (
-        <button onClick={() => setSubmitted(true)} className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition">Enviar Respuestas</button>
+        <button onClick={handleSubmit} className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition">Enviar Respuestas</button>
       )}
 
       {submitted && (
@@ -282,6 +380,7 @@ function StudentDashboard({ user, onLogout }) {
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
 
   const generateQuiz = async () => {
     if (!content.trim() || !topic.trim()) return;
@@ -386,10 +485,16 @@ function StudentDashboard({ user, onLogout }) {
               </div>
             </div>
 
-            {quiz && !quiz.error && (
+            {quiz && !quiz.error && !quizSubmitted && (
               <div className="bg-white rounded-xl shadow p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Quiz de Práctica</h3>
-                <QuizView questions={quiz} />
+                <QuizView questions={quiz} studentName={user.name} topic={topic} onSubmitted={() => setQuizSubmitted(true)} />
+              </div>
+            )}
+            {quizSubmitted && (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+                <p className="text-green-700 font-semibold">¡Quiz completado! Tu resultado ha sido enviado al docente.</p>
+                <button onClick={() => { setQuiz(null); setQuizSubmitted(false); setTopic(""); setContent(""); }} className="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Hacer otro quiz</button>
               </div>
             )}
 
