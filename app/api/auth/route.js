@@ -26,6 +26,19 @@ async function ensureSeed() {
   } catch {}
 }
 
+export async function GET(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const role = searchParams.get("role");
+    const users = await readUsers();
+    let filtered = users;
+    if (role) filtered = users.filter((u) => u.role === role);
+    return new Response(JSON.stringify(filtered.map((u) => ({ username: u.username, role: u.role, level: u.level || null }))));
+  } catch (e) {
+    return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+  }
+}
+
 export async function POST(req) {
   try {
     await ensureSeed();

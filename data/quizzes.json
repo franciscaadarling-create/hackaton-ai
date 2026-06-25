@@ -378,5 +378,286 @@
     "deadline": "2026-06-25T11:30",
     "level": "3ro",
     "subject": "Redes"
+  },
+  {
+    "id": 1782395990557,
+    "topic": "Modelo OSI",
+    "questions": [
+      {
+        "question": "¿Cuál es el nombre del nivel más alto del modelo OSI?",
+        "options": [
+          "Paso de datos",
+          "Paso de control",
+          "Paso de enlace de datos",
+          "Aplicación"
+        ],
+        "correctIndex": 3
+      },
+      {
+        "question": "¿Qué función realiza el nivel de enlace de datos en el modelo OSI?",
+        "options": [
+          "Asignar direcciones IP",
+          "Ejecutar protocolos de transporte",
+          "Reenviar paquetes de datos",
+          "Conectar dispositivos en una red"
+        ],
+        "correctIndex": 3
+      },
+      {
+        "question": "¿Cuántos niveles hay en el modelo OSI?",
+        "options": [
+          "7",
+          "6",
+          "5",
+          "4"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué es el protocolo TCP/IP en relación con el modelo OSI?",
+        "options": [
+          "Un nivel de aplicación",
+          "Un conjunto de protocolos que reemplazan al modelo OSI",
+          "Un protocolo de transporte",
+          "Un protocolo de enlace de datos"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué función realiza el nivel de red en el modelo OSI?",
+        "options": [
+          "Routerar paquetes de datos",
+          "Asignar direcciones IP",
+          "Reenviar paquetes de datos",
+          "Ejecutar protocolos de transporte"
+        ],
+        "correctIndex": 0
+      }
+    ],
+    "publishedAt": "2026-06-25T13:59:50.557Z",
+    "deadline": "2026-06-25T11:35",
+    "level": "3ro",
+    "subject": "Redes"
+  },
+  {
+    "id": 1782397559345,
+    "topic": "modelo osi",
+    "questions": [
+      {
+        "question": "¿Qué es el modelo OSI?",
+        "options": [
+          "Un protocolo de internet",
+          "Un modelo de referencia para redes de computadoras",
+          "Un tipo de red local",
+          "Un software de seguridad"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Cuántos niveles tiene el modelo OSI?",
+        "options": [
+          "4",
+          "5",
+          "7",
+          "8"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Cuál es el primer nivel del modelo OSI?",
+        "options": [
+          "Físico",
+          "Datos",
+          "Red",
+          "Enlace de datos"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué nivel del modelo OSI se encarga de la autenticación y el control de acceso?",
+        "options": [
+          "Nivel de aplicación",
+          "Nivel de presentación",
+          "Nivel de sesión",
+          "Nivel de transporte"
+        ],
+        "correctIndex": 3
+      },
+      {
+        "question": "¿Qué proceso se utiliza en el nivel de aplicación del modelo OSI para establecer una comunicación entre dos aplicaciones?",
+        "options": [
+          "Sincronización",
+          "Autenticación",
+          "Sesión",
+          "Conexión TCP/IP"
+        ],
+        "correctIndex": 3
+      },
+      {
+        "question": "¿Qué nivel del modelo OSI se encarga de la transferencia de datos entre dos redes?",
+        "options": [
+          "Nivel de enlace de datos",
+          "Nivel de red",
+          "Nivel de transporte",
+          "Nivel de sesión"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué tipo de errores se detectan en el nivel de enlace de datos del modelo OSI?",
+        "options": [
+          "Errores de bit",
+          "Errores de paquete",
+          "Errores de flujo",
+          "Errores de sincronización"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué nivel del modelo OSI se encarga de la gestión de la conexión entre dos dispositivos?",
+        "options": [
+          "Nivel de sesión",
+          "Nivel de transporte",
+          "Nivel de red",
+          "Nivel de enlace de datos"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué protocolo del TCP/IP se utiliza en el nivel de transporte del modelo OSI para proporcionar una conexión confiable?",
+        "options": [
+          "HTTP",
+          "FTP",
+          "TCP",
+          "UDP"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué nivel del modelo OSI se encarga de la gestión de la conexión y la seguridad de la comunicación?",
+        "options": [
+          "Nivel de sesión",
+          "Nivel de presentación",
+          "Nivel de transporte",
+          "Nivel de aplicación"
+        ],
+        "correctIndex": 0
+      }
+    ],
+    "publishedAt": "2026-06-25T14:25:59.345Z",
+    "deadline": "2026-06-25T11:30",
+    "level": "3ro",
+    "subject": "Redes"
+  },
+  {
+    "id": 1782400291733,
+    "topic": "U3- modelo osi acortado",
+    "questions": [
+      {
+        "question": "¿Cuántas capas tiene el Modelo OSI?",
+        "options": [
+          "5",
+          "7",
+          "9",
+          "11"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué función tiene la Capa Física en el Modelo OSI?",
+        "options": [
+          "Proporciona conectividad entre sistemas de hosts",
+          "Define las especificaciones eléctricas y mecánicas para activar y mantener el enlace físico",
+          "Transmite datos de manera confiable a través de un enlace físico",
+          "Establece los enlaces necesarios entre dispositivos físicos"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué capa se encarga de manejar las identificaciones físicas de cada dispositivo conectado a la red y establecer los enlaces necesarios?",
+        "options": [
+          "Capa de Enlace de Datos",
+          "Capa de Red",
+          "Capa de Transporte",
+          "Capa de Sesión"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Cuál es el protocolo orientado a conexión utilizado en la Capa de Transporte?",
+        "options": [
+          "UDP",
+          "TCP",
+          "HTTP",
+          "SMTP"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué capa se encarga de establecer, mantener y cerrar las sesiones entre equipos?",
+        "options": [
+          "Capa de Presentación",
+          "Capa de Aplicación",
+          "Capa de Sesión",
+          "Capa de Transporte"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué capa se encarga de presentar los datos a la capa de aplicación y transformarlos en formatos como texto, imágenes y sonido?",
+        "options": [
+          "Capa de Enlace de Datos",
+          "Capa de Red",
+          "Capa de Presentación",
+          "Capa de Aplicación"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Cuál es el protocolo utilizado para la transferencia de archivos en la Capa de Aplicación?",
+        "options": [
+          "HTTP",
+          "SMTP",
+          "POP",
+          "FTP"
+        ],
+        "correctIndex": 3
+      },
+      {
+        "question": "¿Qué capa se encarga de conectar dos sistemas de hosts que pueden estar ubicados en redes geográficamente distintas?",
+        "options": [
+          "Capa de Enlace de Datos",
+          "Capa de Red",
+          "Capa de Transporte",
+          "Capa de Sesión"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué es el MTU (Maximum Transmission Unit) en la Capa de Transporte?",
+        "options": [
+          "La velocidad de transmisión máxima",
+          "La cantidad máxima de datos que se pueden transmitir en un paquete",
+          "La longitud máxima de un paquete",
+          "La distancia máxima de transmisión"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué capa se encarga de interactuar con la capa de presentación y representar la interfaz con el usuario?",
+        "options": [
+          "Capa de Enlace de Datos",
+          "Capa de Red",
+          "Capa de Aplicación",
+          "Capa de Sesión"
+        ],
+        "correctIndex": 3
+      }
+    ],
+    "publishedAt": "2026-06-25T15:11:31.733Z",
+    "deadline": "2026-06-25T17:30",
+    "level": "3ro",
+    "subject": "Redes",
+    "teacherName": "docente"
   }
 ]

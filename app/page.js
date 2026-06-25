@@ -282,6 +282,7 @@ function TeacherDashboard({ user, onLogout }) {
   const [teacherNotifs, setTeacherNotifs] = useState(0);
   const [teacherNotifList, setTeacherNotifList] = useState([]);
   const [showNotifs, setShowNotifs] = useState(false);
+  const [allStudents, setAllStudents] = useState([]);
   const fileInputRef = useRef(null);
   const chatBottomRef = useRef(null);
 
@@ -290,6 +291,10 @@ function TeacherDashboard({ user, onLogout }) {
   const loadTeacherNotifs = useCallback(async () => {
     try { const res = await fetch(`/api/notifications?userName=${user.name}&role=teacher`); const data = await res.json(); setTeacherNotifs(data.length); setTeacherNotifList(data); } catch {}
   }, [user.name]);
+
+  const loadSavedContent = useCallback(async () => {
+    try { const res = await fetch("/api/saved-content"); const data = await res.json(); setSavedContentList(data); } catch {}
+  }, []);
 
   const checkMissed = useCallback(async () => {
     try { await fetch("/api/check-missed"); loadTeacherNotifs(); } catch {}
@@ -300,18 +305,22 @@ function TeacherDashboard({ user, onLogout }) {
   }, [user.name, teacherNotifList]);
 
   const loadResults = useCallback(async () => {
-    try { const res = await fetch("/api/results"); const data = await res.json(); setResults(data); } catch {}
+    try { const res = await fetch(`/api/results?teacherName=${encodeURIComponent(user.name)}`); const data = await res.json(); setResults(data); } catch {}
+  }, [user.name]);
+
+  const loadStudents = useCallback(async () => {
+    try { const res = await fetch("/api/auth?role=student"); const data = await res.json(); setAllStudents(data); } catch {}
   }, []);
 
   const loadQuizzes = useCallback(async () => {
-    try { const res = await fetch("/api/quizzes"); const data = await res.json(); setPublishedQuizzes(data); } catch {}
-  }, []);
+    try { const res = await fetch(`/api/quizzes?teacherName=${encodeURIComponent(user.name)}`); const data = await res.json(); setPublishedQuizzes(data); } catch {}
+  }, [user.name]);
 
   const loadContext = useCallback(async () => {
     try { const res = await fetch("/api/context"); const data = await res.json(); setContextText(data.text || ""); } catch {}
   }, []);
 
-  useEffect(() => { loadTeacherNotifs(); if (activeTab === "results") { loadResults(); checkMissed(); } if (activeTab === "quiz") loadQuizzes(); if (activeTab === "context") loadContext(); }, [activeTab, loadResults, loadQuizzes, loadContext, loadTeacherNotifs, checkMissed]);
+  useEffect(() => { loadTeacherNotifs(); if (activeTab === "results") { loadResults(); checkMissed(); loadStudents(); } if (activeTab === "quiz") loadQuizzes(); if (activeTab === "context") loadContext(); if (activeTab === "content") loadSavedContent(); }, [activeTab, loadResults, loadQuizzes, loadContext, loadTeacherNotifs, checkMissed, loadSavedContent, loadStudents]);
 
   const saveContext = async () => {
     try { await fetch("/api/context", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: contextText }) }); alert("Contexto guardado. Los chatbots ahora usarán este material."); } catch { alert("Error al guardar el contexto"); }
@@ -339,21 +348,30 @@ function TeacherDashboard({ user, onLogout }) {
     try {
       const reader = new FileReader();
       reader.onload = async (ev) => {
-        const base64 = ev.target.result.split(",")[1];
-        const res = await fetch("/api/extract-text", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: file.name, data: base64 }) });
-        const result = await res.json();
-        if (result.text) setContent(result.text); else alert("Error: " + (result.error || "respuesta inesperada"));
+        try {
+          const base64 = ev.target.result.split(",")[1];
+          const res = await fetch("/api/extract-text", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: file.name, data: base64 }) });
+          const result = await res.json();
+          if (result.text) setContent(result.text);
+          else alert("Error: " + (result.error || "No se pudo procesar el archivo. Asegúrate de que sea un .txt, .pdf o imagen con texto."));
+        } catch (fetchErr) { alert("Error al procesar el archivo: " + fetchErr.message); }
         setUploading(false);
       };
       reader.onerror = () => { alert("Error al leer el archivo"); setUploading(false); };
       reader.readAsDataURL(file);
     } catch (e) { alert("Error al procesar el archivo: " + e.message); setUploading(false); }
+    e.target.value = "";
   };
 
-  const saveContent = () => {
+  const saveContent = async () => {
     if (!topic.trim() || !content.trim()) return;
-    setSavedContentList([...savedContentList, { id: Date.now(), topic, content, date: new Date().toLocaleString() }]);
-    alert(`Contenido "${topic}" guardado correctamente.`);
+    try {
+      const res = await fetch("/api/saved-content", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic, content }) });
+      const saved = await res.json();
+      if (saved.error) { alert("Error: " + saved.error); return; }
+      setSavedContentList((prev) => [...prev, saved]);
+      alert(`Contenido "${topic}" guardado correctamente.`);
+    } catch { alert("Error al guardar el contenido"); }
   };
 
   const generateQuiz = async () => {
@@ -372,7 +390,7 @@ function TeacherDashboard({ user, onLogout }) {
     if (!quiz || quiz.error) return; setPublishing(true);
     try {
       const qTopic = selectedContentIds.length > 0 ? savedContentList.filter((c) => selectedContentIds.includes(c.id)).map((c) => c.topic).join(" + ") : topic;
-      const res = await fetch("/api/quizzes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic: qTopic, questions: quiz, deadline: deadline || null, level: quizLevel, subject: quizSubject }) });
+      const res = await fetch("/api/quizzes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic: qTopic, questions: quiz, deadline: deadline || null, level: quizLevel, subject: quizSubject, teacherName: user.name }) });
       if (deadline) {
         const published = await res.json();
         await fetch("/api/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ quizId: published.id, topic: qTopic, deadline, publishedAt: published.publishedAt }) });
@@ -447,7 +465,7 @@ function TeacherDashboard({ user, onLogout }) {
                       Seleccionar archivo
                     </button>
                     {fileName && <span className="text-sm text-gray-500 truncate max-w-[200px]">{fileName}</span>}
-                    {uploading && <span className="text-sm text-[#e71367] animate-pulse">Procesando...</span>}
+                    {uploading && <span className="text-sm text-[#e71367] animate-pulse">⏳ Procesando...</span>}
                   </div>
                 </div>
                 <div>
@@ -719,6 +737,54 @@ function TeacherDashboard({ user, onLogout }) {
                 </div>
               )}
             </div>
+
+            {publishedQuizzes.length > 0 && allStudents.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2">
+                  <TabIcon id="results" /> Alumnos por Quiz
+                </h2>
+                <div className="space-y-4">
+                  {publishedQuizzes.toReversed().map((q) => {
+                    const submitted = results.filter((r) => r.topic === q.topic);
+                    const submittedNames = submitted.map((r) => r.studentName);
+                    const missing = allStudents.filter((s) => !submittedNames.includes(s.username));
+                    const isExpired = q.deadline && new Date(q.deadline) < new Date();
+                    return (
+                      <div key={q.id} className="border border-gray-100 rounded-xl p-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="font-semibold text-gray-800">{q.topic}</span>
+                          <span className="text-xs text-gray-400">{submitted.length}/{allStudents.length} alumnos</span>
+                        </div>
+                        {submitted.length > 0 && (
+                          <div className="mb-2">
+                            <p className="text-xs text-green-600 font-medium mb-1">Entregado:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {submitted.map((r) => (
+                                <span key={r.id} className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                                  {r.studentName} ({r.score}/{r.total})
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {missing.length > 0 && (
+                          <div>
+                            <p className="text-xs text-red-500 font-medium mb-1">Falta entregar:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {missing.map((s) => (
+                                <span key={s.username} className={`text-xs px-2 py-0.5 rounded-full ${isExpired ? "bg-red-100 text-red-600" : "bg-gray-100 text-gray-500"}`}>
+                                  {s.username}{isExpired ? " (vencido)" : ""}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             </div>
           )}
         </main>
@@ -727,7 +793,7 @@ function TeacherDashboard({ user, onLogout }) {
   );
 }
 
-function QuizView({ questions, studentName, topic, onSubmitted, initialAnswers, initialSubmitted }) {
+function QuizView({ questions, studentName, topic, teacherName, onSubmitted, initialAnswers, initialSubmitted }) {
   const [answers, setAnswers] = useState(initialAnswers || {});
   const [submitted, setSubmitted] = useState(initialSubmitted || false);
 
@@ -744,7 +810,7 @@ function QuizView({ questions, studentName, topic, onSubmitted, initialAnswers, 
     const count = questions.filter((q, i) => answers[i] === q.correctIndex).length;
     setSubmitted(true);
     if (studentName && topic && onSubmitted) {
-      try { await fetch("/api/results", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ studentName, topic, score: count, total: questions.length, questions, userAnswers: answers }) }); onSubmitted(); } catch {}
+      try { await fetch("/api/results", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ studentName, topic, score: count, total: questions.length, questions, userAnswers: answers, teacherName }) }); onSubmitted(); } catch {}
     }
   };
 
@@ -1086,6 +1152,7 @@ function StudentDashboard({ user, onLogout }) {
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [availableQuizzes, setAvailableQuizzes] = useState([]);
   const [selectedQuizId, setSelectedQuizId] = useState(null);
+  const [quizTeacher, setQuizTeacher] = useState("");
   const [questionCount, setQuestionCount] = useState(5);
   const [studentResults, setStudentResults] = useState([]);
   const [selectedResult, setSelectedResult] = useState(null);
@@ -1128,7 +1195,7 @@ function StudentDashboard({ user, onLogout }) {
     try { await fetch("/api/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "update-level", username: user.name, level: newLevel }) }); } catch {}
   };
 
-  const startTeacherQuiz = (q) => { setSelectedQuizId(q.id); setQuiz(q.questions); setTopic(q.topic); setQuizSubmitted(false); };
+  const startTeacherQuiz = (q) => { setSelectedQuizId(q.id); setQuiz(q.questions); setTopic(q.topic); setQuizSubmitted(false); setQuizTeacher(q.teacherName || "docente"); };
 
   const generateQuiz = async () => {
     if (!content.trim() || !topic.trim()) return;
@@ -1354,7 +1421,7 @@ function StudentDashboard({ user, onLogout }) {
               {quiz && !quiz.error && !quizSubmitted && (
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Quiz: {topic}</h3>
-                  <QuizView questions={quiz} studentName={user.name} topic={topic} onSubmitted={() => setQuizSubmitted(true)} />
+                  <QuizView questions={quiz} studentName={user.name} topic={topic} teacherName={selectedQuizId ? quizTeacher : ""} onSubmitted={() => setQuizSubmitted(true)} />
                 </div>
               )}
 

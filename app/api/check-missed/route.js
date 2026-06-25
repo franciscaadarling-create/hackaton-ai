@@ -28,7 +28,7 @@ export async function GET() {
         (n) => n.type === "quiz_missed" && n.quizId === quiz.id && n.studentName === student
       );
       if (!alreadyNotified) {
-        await createNotification({ type: "quiz_missed", forUser: "docente", quizId: quiz.id, topic: quiz.topic, studentName: student, deadline: quiz.deadline });
+        await createNotification({ type: "quiz_missed", forUser: quiz.teacherName || "docente", quizId: quiz.id, topic: quiz.topic, studentName: student, deadline: quiz.deadline });
         missed.push({ student, topic: quiz.topic });
       }
     }

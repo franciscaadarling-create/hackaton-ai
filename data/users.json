@@ -30,5 +30,10 @@
     "password": "qnf9bs",
     "role": "student",
     "level": "3ro"
+  },
+  {
+    "username": "dario",
+    "password": "dario",
+    "role": "teacher"
   }
 ]

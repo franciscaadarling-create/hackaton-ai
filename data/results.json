@@ -712,5 +712,195 @@
     },
     "id": 1782394390087,
     "submittedAt": "2026-06-25T13:33:10.087Z"
+  },
+  {
+    "studentName": "meli_biegun",
+    "topic": "qué es el módelo osi",
+    "score": 0,
+    "total": 5,
+    "questions": [
+      {
+        "question": "¿Quién creó el Modelo OSI?",
+        "options": [
+          "Bob Kahn y Vint Cerf",
+          "Larry Roberts y Frank Heart",
+          "Donald Davies y Roger Scantlebury",
+          "Steve Crocker y Jon Postel"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Cuántas capas tiene el Modelo OSI?",
+        "options": [
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Cuál es la capa más baja del Modelo OSI?",
+        "options": [
+          "Capa de enlace de datos",
+          "Capa de red",
+          "Capa de transporte",
+          "Capa física"
+        ],
+        "correctIndex": 3
+      },
+      {
+        "question": "¿Qué es el propósito de la capa de presentación del Modelo OSI?",
+        "options": [
+          "Encriptar y descifrar datos",
+          "Convertir formatos de datos",
+          "Proveer dirección de red",
+          "Realizar la autenticación"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Por qué se creó el Modelo OSI?",
+        "options": [
+          "Para mejorar la seguridad en redes",
+          "Para facilitar la comunicación entre computadoras",
+          "Para diseñar protocolos de comunicación",
+          "Para crear una red global"
+        ],
+        "correctIndex": 2
+      }
+    ],
+    "userAnswers": {
+      "0": 1,
+      "1": 3,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    },
+    "id": 1782397652125,
+    "submittedAt": "2026-06-25T14:27:32.125Z"
+  },
+  {
+    "studentName": "meli_biegun",
+    "topic": "U3- modelo osi acortado",
+    "score": 5,
+    "total": 10,
+    "questions": [
+      {
+        "question": "¿Cuántas capas tiene el Modelo OSI?",
+        "options": [
+          "5",
+          "7",
+          "9",
+          "11"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué función tiene la Capa Física en el Modelo OSI?",
+        "options": [
+          "Proporciona conectividad entre sistemas de hosts",
+          "Define las especificaciones eléctricas y mecánicas para activar y mantener el enlace físico",
+          "Transmite datos de manera confiable a través de un enlace físico",
+          "Establece los enlaces necesarios entre dispositivos físicos"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué capa se encarga de manejar las identificaciones físicas de cada dispositivo conectado a la red y establecer los enlaces necesarios?",
+        "options": [
+          "Capa de Enlace de Datos",
+          "Capa de Red",
+          "Capa de Transporte",
+          "Capa de Sesión"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Cuál es el protocolo orientado a conexión utilizado en la Capa de Transporte?",
+        "options": [
+          "UDP",
+          "TCP",
+          "HTTP",
+          "SMTP"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué capa se encarga de establecer, mantener y cerrar las sesiones entre equipos?",
+        "options": [
+          "Capa de Presentación",
+          "Capa de Aplicación",
+          "Capa de Sesión",
+          "Capa de Transporte"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué capa se encarga de presentar los datos a la capa de aplicación y transformarlos en formatos como texto, imágenes y sonido?",
+        "options": [
+          "Capa de Enlace de Datos",
+          "Capa de Red",
+          "Capa de Presentación",
+          "Capa de Aplicación"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Cuál es el protocolo utilizado para la transferencia de archivos en la Capa de Aplicación?",
+        "options": [
+          "HTTP",
+          "SMTP",
+          "POP",
+          "FTP"
+        ],
+        "correctIndex": 3
+      },
+      {
+        "question": "¿Qué capa se encarga de conectar dos sistemas de hosts que pueden estar ubicados en redes geográficamente distintas?",
+        "options": [
+          "Capa de Enlace de Datos",
+          "Capa de Red",
+          "Capa de Transporte",
+          "Capa de Sesión"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué es el MTU (Maximum Transmission Unit) en la Capa de Transporte?",
+        "options": [
+          "La velocidad de transmisión máxima",
+          "La cantidad máxima de datos que se pueden transmitir en un paquete",
+          "La longitud máxima de un paquete",
+          "La distancia máxima de transmisión"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué capa se encarga de interactuar con la capa de presentación y representar la interfaz con el usuario?",
+        "options": [
+          "Capa de Enlace de Datos",
+          "Capa de Red",
+          "Capa de Aplicación",
+          "Capa de Sesión"
+        ],
+        "correctIndex": 3
+      }
+    ],
+    "userAnswers": {
+      "0": 1,
+      "1": 2,
+      "2": 0,
+      "3": 0,
+      "4": 2,
+      "5": 2,
+      "6": 0,
+      "7": 2,
+      "8": 1,
+      "9": 2
+    },
+    "teacherName": "docente",
+    "id": 1782400408887,
+    "submittedAt": "2026-06-25T15:13:28.887Z"
   }
 ]

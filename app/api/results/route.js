@@ -26,12 +26,26 @@ export async function POST(req) {
   results.push(entry);
   await writeResults(results);
   try {
-    await createNotification({ type: "quiz_completed", forUser: "docente", quizId: entry.id, topic: body.topic, studentName: body.studentName, score: body.score, total: body.total });
+    if (body.teacherName) {
+      await createNotification({ type: "quiz_completed", forUser: body.teacherName, quizId: entry.id, topic: body.topic, studentName: body.studentName, score: body.score, total: body.total });
+    }
   } catch {}
   return new Response(JSON.stringify({ success: true }));
 }
 
-export async function GET() {
-  const results = await readResults();
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const teacherName = searchParams.get("teacherName");
+  let results = await readResults();
+  if (teacherName) {
+    const quizzesFilePath = path.join(process.cwd(), "data", "quizzes.json");
+    let quizzes = [];
+    try {
+      const raw = await fs.readFile(quizzesFilePath, "utf-8");
+      quizzes = JSON.parse(raw);
+    } catch {}
+    const teacherQuizTopics = new Set(quizzes.filter((q) => q.teacherName === teacherName).map((q) => q.topic));
+    results = results.filter((r) => teacherQuizTopics.has(r.topic));
+  }
   return new Response(JSON.stringify(results));
 }

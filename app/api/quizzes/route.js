@@ -21,6 +21,7 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const level = searchParams.get("level");
   const subject = searchParams.get("subject");
+  const teacherName = searchParams.get("teacherName");
   let quizzes = await readQuizzes();
   if (level) {
     quizzes = quizzes.filter((q) => !q.level || q.level === level);
@@ -28,13 +29,16 @@ export async function GET(req) {
   if (subject) {
     quizzes = quizzes.filter((q) => q.subject === subject);
   }
+  if (teacherName) {
+    quizzes = quizzes.filter((q) => q.teacherName === teacherName);
+  }
   return new Response(JSON.stringify(quizzes));
 }
 
 export async function POST(req) {
-  const { topic, questions, deadline, level, subject } = await req.json();
+  const { topic, questions, deadline, level, subject, teacherName } = await req.json();
   const quizzes = await readQuizzes();
-  const quiz = { id: Date.now(), topic, questions, publishedAt: new Date().toISOString(), deadline: deadline || null, level: level || null, subject: subject || null };
+  const quiz = { id: Date.now(), topic, questions, publishedAt: new Date().toISOString(), deadline: deadline || null, level: level || null, subject: subject || null, teacherName: teacherName || null };
   quizzes.push(quiz);
   await writeQuizzes(quizzes);
   return new Response(JSON.stringify(quiz));
