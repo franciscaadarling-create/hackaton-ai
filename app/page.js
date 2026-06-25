@@ -1,6 +1,44 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+function MarkdownMessage({ content, isUser }) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+        code: ({ node, inline, className, children, ...props }) =>
+          inline ? (
+            <code className={`text-xs rounded px-1 py-0.5 ${isUser ? "bg-white/20" : "bg-black/10"}`}>{children}</code>
+          ) : (
+            <pre className={`text-xs rounded-lg p-3 my-2 overflow-x-auto ${isUser ? "bg-white/20" : "bg-black/10"}`}><code>{children}</code></pre>
+          ),
+        ul: ({ children }) => <ul className="list-disc ml-4 mb-1 space-y-0.5">{children}</ul>,
+        ol: ({ children }) => <ol className="list-decimal ml-4 mb-1 space-y-0.5">{children}</ol>,
+        li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+        a: ({ href, children }) => (
+          <a href={href} target="_blank" rel="noopener noreferrer" className="underline opacity-80 hover:opacity-100">
+            {children}
+          </a>
+        ),
+        h1: ({ children }) => <h1 className="text-base font-bold mb-1">{children}</h1>,
+        h2: ({ children }) => <h2 className="text-sm font-bold mb-1">{children}</h2>,
+        h3: ({ children }) => <h3 className="text-sm font-semibold mb-1">{children}</h3>,
+        strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+        em: ({ children }) => <em className="italic">{children}</em>,
+        blockquote: ({ children }) => (
+          <blockquote className={`border-l-2 pl-3 my-1 opacity-80 ${isUser ? "border-white/40" : "border-gray-300"}`}>{children}</blockquote>
+        ),
+        hr: () => <hr className="my-2 border-t border-gray-200" />,
+      }}
+    >
+      {content}
+    </ReactMarkdown>
+  );
+}
 
 const PROFESSORS = [
   { id: "software", name: "Shulian", subject: "Programación", style: "inteligente, serio, brainrot. JavaScript, TypeScript, HTML y CSS" },
@@ -178,7 +216,7 @@ function TeacherDashboard({ user, onLogout }) {
   const [selectedProfessor, setSelectedProfessor] = useState(PROFESSORS[0].id);
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [chatMessages, setChatMessages] = useState([]);
+  const [chatMessagesByProf, setChatMessagesByProf] = useState({});
   const [chatInput, setChatInput] = useState("");
   const [activeTab, setActiveTab] = useState("content");
   const [fileName, setFileName] = useState("");
@@ -193,6 +231,9 @@ function TeacherDashboard({ user, onLogout }) {
   const [contextUrl, setContextUrl] = useState("");
   const [fetchingUrl, setFetchingUrl] = useState(false);
   const fileInputRef = useRef(null);
+  const chatBottomRef = useRef(null);
+
+  useEffect(() => { chatBottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chatMessagesByProf[selectedProfessor]]);
 
   const loadResults = useCallback(async () => {
     try { const res = await fetch("/api/results"); const data = await res.json(); setResults(data); } catch {}
@@ -273,14 +314,36 @@ function TeacherDashboard({ user, onLogout }) {
     setPublishing(false);
   };
 
+  const chatMessages = chatMessagesByProf[selectedProfessor] || [];
+
+  const saveChatHistory = async (profId, msgs) => {
+    try { await fetch("/api/chat-history", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userName: user.name, professorId: profId, messages: msgs }) }); } catch {}
+  };
+
+  useEffect(() => {
+    if (activeTab === "chat") {
+      (async () => {
+        try { const res = await fetch(`/api/chat-history?userName=${user.name}&professorId=${selectedProfessor}`); const data = await res.json(); if (data.messages && data.messages.length > 0) setChatMessagesByProf((prev) => ({ ...prev, [selectedProfessor]: data.messages })); } catch {}
+      })();
+    }
+  }, [activeTab, selectedProfessor, user.name]);
+
   const sendChatMessage = async (e) => {
     e.preventDefault(); if (!chatInput.trim()) return;
-    const newMessages = [...chatMessages, { role: "user", content: chatInput }];
-    setChatMessages(newMessages); setChatInput("");
+    const current = chatMessagesByProf[selectedProfessor] || [];
+    const newMessages = [...current, { role: "user", content: chatInput }];
+    setChatMessagesByProf((prev) => ({ ...prev, [selectedProfessor]: newMessages }));
+    setChatInput("");
     try {
       const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: newMessages, expert: selectedProfessor }) });
-      const data = await res.json(); setChatMessages([...newMessages, { role: "assistant", content: data.text || data.error || "Error desconocido" }]);
-    } catch { setChatMessages([...newMessages, { role: "assistant", content: "Error al conectar con el chatbot." }]); }
+      const data = await res.json();
+      const withReply = [...newMessages, { role: "assistant", content: data.text || data.error || "Error desconocido" }];
+      setChatMessagesByProf((prev) => ({ ...prev, [selectedProfessor]: withReply }));
+      saveChatHistory(selectedProfessor, withReply);
+    } catch {
+      const withError = [...newMessages, { role: "assistant", content: "Error al conectar con el chatbot." }];
+      setChatMessagesByProf((prev) => ({ ...prev, [selectedProfessor]: withError }));
+    }
   };
 
   const tabs = [
@@ -437,25 +500,58 @@ function TeacherDashboard({ user, onLogout }) {
           {activeTab === "chat" && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-[calc(100vh-12rem)]">
               <div className="p-4 border-b border-gray-100">
-                <h2 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2"><TabIcon id="chat" /> Chatbot</h2>
-                <div className="flex gap-2 flex-wrap">
-                  {PROFESSORS.map((p) => (
-                    <button key={p.id} onClick={() => setSelectedProfessor(p.id)} className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${selectedProfessor === p.id ? "bg-indigo-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>{p.name}</button>
-                  ))}
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-base shadow-sm shrink-0">{PROFESSORS.find((p) => p.id === selectedProfessor)?.name.charAt(0)}</div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800">{PROFESSORS.find((p) => p.id === selectedProfessor)?.name}</h2>
+                    <p className="text-xs text-gray-400">{PROFESSORS.find((p) => p.id === selectedProfessor)?.subject}</p>
+                  </div>
                 </div>
-                <p className="text-xs text-gray-400 mt-2">{PROFESSORS.find((p) => p.id === selectedProfessor)?.name} - {PROFESSORS.find((p) => p.id === selectedProfessor)?.subject}</p>
+                <div className="flex gap-2 flex-wrap">
+                  {PROFESSORS.map((p) => {
+                    const profMsgs = chatMessagesByProf[p.id] || [];
+                    return (
+                      <button key={p.id} onClick={() => setSelectedProfessor(p.id)} className={`px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${selectedProfessor === p.id ? "bg-indigo-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                        <span className={`w-2 h-2 rounded-full ${profMsgs.length > 0 ? "bg-green-400" : "bg-gray-300"}`} />
+                        {p.name}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                {chatMessages.length === 0 && <p className="text-gray-400 text-center pt-10">Inicia una conversación con el chatbot</p>}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={chatEndRef}>
+                {chatMessages.length === 0 && (
+                  <div className="text-center pt-10">
+                    <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                      <svg className="w-8 h-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                    </div>
+                    <p className="text-gray-400 text-sm">Inicia una conversación con {PROFESSORS.find((p) => p.id === selectedProfessor)?.name}</p>
+                    <p className="text-gray-300 text-xs mt-1">Pregunta sobre {PROFESSORS.find((p) => p.id === selectedProfessor)?.subject.toLowerCase()}</p>
+                  </div>
+                )}
                 {chatMessages.map((msg, i) => (
-                  <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm ${msg.role === "user" ? "bg-indigo-600 text-white rounded-br-md shadow-sm" : "bg-gray-100 text-gray-800 rounded-bl-md"}`}>{msg.content}</div>
+                  <div key={i} className={`flex items-end gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                    {msg.role === "assistant" && (
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-sm shrink-0">{PROFESSORS.find((p) => p.id === selectedProfessor)?.name.charAt(0)}</div>
+                    )}
+                    <div className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user" ? "bg-indigo-600 text-white rounded-br-md shadow-sm" : "bg-gray-50 text-gray-800 rounded-tl-md border border-gray-100 shadow-sm"}`}>
+                      <MarkdownMessage content={msg.content} isUser={msg.role === "user"} />
+                    </div>
+                    {msg.role === "user" && (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs font-bold shrink-0">T</div>
+                    )}
                   </div>
                 ))}
+                <div ref={chatBottomRef} />
               </div>
-              <form onSubmit={sendChatMessage} className="p-4 border-t border-gray-100 flex gap-2">
-                <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" placeholder="Escribe tu mensaje..." />
-                <button type="submit" className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-indigo-700 transition shadow-sm">Enviar</button>
+              <form onSubmit={sendChatMessage} className="p-4 border-t border-gray-100 bg-gray-50/50">
+                <div className="flex gap-2">
+                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none bg-white text-sm" placeholder={`Pregúntale a ${PROFESSORS.find((p) => p.id === selectedProfessor)?.name}...`} />
+                  <button type="submit" disabled={!chatInput.trim()} className="bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm flex items-center gap-1.5">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                    Enviar
+                  </button>
+                </div>
               </form>
             </div>
           )}
@@ -569,7 +665,7 @@ function QuizView({ questions, studentName, topic, onSubmitted, initialAnswers, 
 
 function StudentDashboard({ user, onLogout }) {
   const [selectedProfessor, setSelectedProfessor] = useState(PROFESSORS[0].id);
-  const [chatMessages, setChatMessages] = useState([]);
+  const [chatMessagesByProf, setChatMessagesByProf] = useState({});
   const [chatInput, setChatInput] = useState("");
 
   const [content, setContent] = useState("");
@@ -584,6 +680,9 @@ function StudentDashboard({ user, onLogout }) {
   const [studentResults, setStudentResults] = useState([]);
   const [selectedResult, setSelectedResult] = useState(null);
   const [hasContext, setHasContext] = useState(false);
+  const chatBottomRef = useRef(null);
+
+  useEffect(() => { chatBottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chatMessagesByProf[selectedProfessor]]);
 
   const loadAvailableQuizzes = useCallback(async () => { try { const res = await fetch("/api/quizzes"); const data = await res.json(); setAvailableQuizzes(data); } catch {} }, []);
   useEffect(() => { if (activeTab === "quiz") loadAvailableQuizzes(); }, [activeTab, loadAvailableQuizzes]);
@@ -607,11 +706,34 @@ function StudentDashboard({ user, onLogout }) {
 
   useEffect(() => { if (activeTab === "results") loadStudentResults(); if (activeTab === "chat") checkContext(); }, [activeTab, loadStudentResults, checkContext]);
 
+  const chatMessages = chatMessagesByProf[selectedProfessor] || [];
+
+  const saveChatHistory = async (profId, msgs) => {
+    try { await fetch("/api/chat-history", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userName: user.name, professorId: profId, messages: msgs }) }); } catch {}
+  };
+
+  useEffect(() => {
+    if (activeTab === "chat") {
+      (async () => {
+        try { const res = await fetch(`/api/chat-history?userName=${user.name}&professorId=${selectedProfessor}`); const data = await res.json(); if (data.messages && data.messages.length > 0) setChatMessagesByProf((prev) => ({ ...prev, [selectedProfessor]: data.messages })); } catch {}
+      })();
+    }
+  }, [activeTab, selectedProfessor, user.name]);
+
   const sendChatMessage = async (e) => {
     e.preventDefault(); if (!chatInput.trim()) return;
-    const newMessages = [...chatMessages, { role: "user", content: chatInput }];
-    setChatMessages(newMessages); setChatInput("");
-    try { const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: newMessages, expert: selectedProfessor }) }); const data = await res.json(); setChatMessages([...newMessages, { role: "assistant", content: data.text || data.error || "Error desconocido" }]); } catch { setChatMessages([...newMessages, { role: "assistant", content: "Error al conectar con el chatbot." }]); }
+    const current = chatMessagesByProf[selectedProfessor] || [];
+    const newMessages = [...current, { role: "user", content: chatInput }];
+    setChatMessagesByProf((prev) => ({ ...prev, [selectedProfessor]: newMessages }));
+    setChatInput("");
+    try { const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: newMessages, expert: selectedProfessor }) }); const data = await res.json();
+      const withReply = [...newMessages, { role: "assistant", content: data.text || data.error || "Error desconocido" }];
+      setChatMessagesByProf((prev) => ({ ...prev, [selectedProfessor]: withReply }));
+      saveChatHistory(selectedProfessor, withReply);
+    } catch {
+      const withError = [...newMessages, { role: "assistant", content: "Error al conectar con el chatbot." }];
+      setChatMessagesByProf((prev) => ({ ...prev, [selectedProfessor]: withError }));
+    }
   };
 
   const tabs = [
@@ -631,25 +753,59 @@ function StudentDashboard({ user, onLogout }) {
           {activeTab === "chat" && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-[calc(100vh-12rem)]">
               <div className="p-4 border-b border-gray-100">
-                <h2 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2"><TabIcon id="chat" /> Chatbots IA</h2>
-                <div className="flex gap-2 flex-wrap">
-                  {PROFESSORS.map((p) => (
-                    <button key={p.id} onClick={() => { setSelectedProfessor(p.id); setChatMessages([]); }} className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${selectedProfessor === p.id ? "bg-indigo-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>{p.name}</button>
-                  ))}
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-base shadow-sm shrink-0">{PROFESSORS.find((p) => p.id === selectedProfessor)?.name.charAt(0)}</div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800">{PROFESSORS.find((p) => p.id === selectedProfessor)?.name}</h2>
+                    <p className="text-xs text-gray-400">{PROFESSORS.find((p) => p.id === selectedProfessor)?.subject}</p>
+                  </div>
+                  {hasContext && <span className="ml-auto inline-flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full"><span className="w-1.5 h-1.5 rounded-full bg-green-500" />Contexto activo</span>}
                 </div>
-                <p className="text-xs text-gray-400 mt-2">{PROFESSORS.find((p) => p.id === selectedProfessor)?.name} - {PROFESSORS.find((p) => p.id === selectedProfessor)?.subject}</p>
+                <div className="flex gap-2 flex-wrap">
+                  {PROFESSORS.map((p) => {
+                    const profMsgs = chatMessagesByProf[p.id] || [];
+                    return (
+                      <button key={p.id} onClick={() => setSelectedProfessor(p.id)} className={`px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${selectedProfessor === p.id ? "bg-indigo-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                        <span className={`w-2 h-2 rounded-full ${profMsgs.length > 0 ? "bg-green-400" : "bg-gray-300"}`} />
+                        {p.name}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                {chatMessages.length === 0 && <p className="text-gray-400 text-center pt-10">Selecciona un profesor y haz una pregunta</p>}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {chatMessages.length === 0 && (
+                  <div className="text-center pt-10">
+                    <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                      <svg className="w-8 h-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                    </div>
+                    <p className="text-gray-400 text-sm">Pregúntale a {PROFESSORS.find((p) => p.id === selectedProfessor)?.name}</p>
+                    <p className="text-gray-300 text-xs mt-1">Sobre {PROFESSORS.find((p) => p.id === selectedProfessor)?.subject.toLowerCase()}</p>
+                  </div>
+                )}
                 {chatMessages.map((msg, i) => (
-                  <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm ${msg.role === "user" ? "bg-indigo-600 text-white rounded-br-md shadow-sm" : "bg-gray-100 text-gray-800 rounded-bl-md"}`}>{msg.content}</div>
+                  <div key={i} className={`flex items-end gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                    {msg.role === "assistant" && (
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-sm shrink-0">{PROFESSORS.find((p) => p.id === selectedProfessor)?.name.charAt(0)}</div>
+                    )}
+                    <div className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user" ? "bg-indigo-600 text-white rounded-br-md shadow-sm" : "bg-gray-50 text-gray-800 rounded-tl-md border border-gray-100 shadow-sm"}`}>
+                      <MarkdownMessage content={msg.content} isUser={msg.role === "user"} />
+                    </div>
+                    {msg.role === "user" && (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs font-bold shrink-0">A</div>
+                    )}
                   </div>
                 ))}
+                <div ref={chatBottomRef} />
               </div>
-              <form onSubmit={sendChatMessage} className="p-4 border-t border-gray-100 flex gap-2">
-                <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" placeholder="Haz una pregunta..." />
-                <button type="submit" className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-indigo-700 transition shadow-sm">Enviar</button>
+              <form onSubmit={sendChatMessage} className="p-4 border-t border-gray-100 bg-gray-50/50">
+                <div className="flex gap-2">
+                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none bg-white text-sm" placeholder={`Pregúntale a ${PROFESSORS.find((p) => p.id === selectedProfessor)?.name}...`} />
+                  <button type="submit" disabled={!chatInput.trim()} className="bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm flex items-center gap-1.5">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                    Enviar
+                  </button>
+                </div>
               </form>
             </div>
           )}

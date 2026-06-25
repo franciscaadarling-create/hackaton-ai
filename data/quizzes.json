@@ -95,5 +95,112 @@
       }
     ],
     "publishedAt": "2026-06-25T01:14:01.400Z"
+  },
+  {
+    "id": 1782385284123,
+    "topic": "Cpu",
+    "questions": [
+      {
+        "question": "¿Cuál fue el primer microprocesador comercialmente disponible?",
+        "options": [
+          "Intel 4004",
+          "Intel 8008",
+          "Intel 8080",
+          "ARM 700"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué tipo de arquitectura utiliza el procesador Intel Core?",
+        "options": [
+          "x86/x64",
+          "ARM",
+          "CISC",
+          "RISC"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Cuál es el propósito de la Unidad de Control en un microprocesador?",
+        "options": [
+          "Realizar operaciones matemáticas",
+          "Decodificar instrucciones del programa",
+          "Gestionar la ejecución de instrucciones",
+          "Almacenar datos"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué tipo de microprocesadores utiliza una arquitectura reducida de instrucciones?",
+        "options": [
+          "CISC",
+          "RISC",
+          "x86/x64",
+          "ARM"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué es el conjunto de instrucciones utilizado por los procesadores Intel x86?",
+        "options": [
+          "CISC",
+          "RISC",
+          "x86/x64",
+          "ARM"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué tipo de microprocesadores están diseñados para manejar cargas de trabajo intensivas y operaciones continuas?",
+        "options": [
+          "Procesadores de escritorio",
+          "Procesadores móviles",
+          "Procesadores de servidor",
+          "Procesadores de juego"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué técnica permite la ejecución de varias etapas de diferentes instrucciones simultáneamente?",
+        "options": [
+          "Pipelines",
+          "Multithreading",
+          "Ciclo de reloj",
+          "DVFS"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué es el proceso de ajustar dinámicamente la frecuencia y el voltaje del procesador?",
+        "options": [
+          "DVFS",
+          "Multithreading",
+          "Pipelines",
+          "Ciclo de reloj"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué fabricante es especializado en el diseño de arquitecturas de procesadores de bajo consumo?",
+        "options": [
+          "Intel",
+          "AMD",
+          "ARM Holdings",
+          "Apple"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué serie de procesadores desarrolla Apple para dispositivos móviles y computadoras personales?",
+        "options": [
+          "serie A",
+          "serie B",
+          "serie C",
+          "serie M"
+        ],
+        "correctIndex": 0
+      }
+    ],
+    "publishedAt": "2026-06-25T11:01:24.123Z"
   }
 ]

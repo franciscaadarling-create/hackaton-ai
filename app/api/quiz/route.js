@@ -7,20 +7,38 @@ function stripMarkdown(text) {
 export async function POST(req) {
   try {
     const { content, topic, count = 5 } = await req.json();
+    if (topic.length > 200) return new Response(JSON.stringify({ error: "El tema es demasiado largo" }));
+    if (content.length > 15000) return new Response(JSON.stringify({ error: "El contenido es demasiado largo (máx 15000 caracteres)" }));
+
+    const SYSTEM_PROMPT = [
+      `Eres un generador de quizzes educativos de alta calidad.`,
+      `Genera exactamente ${count} preguntas de opción múltiple.`,
+      ``,
+      `REGLAS IMPORTANTES:`,
+      `1. Cada pregunta debe basarse ESTRICTAMENTE en el contenido proporcionado.`,
+      `2. Las opciones incorrectas deben ser PLAUSIBLES y relacionadas con el tema.`,
+      `3. Las preguntas deben evaluar comprensión, no solo memorización.`,
+      `4. NO inventes información que no esté en el contenido.`,
+      `5. Distribuye las respuestas correctas (no todas "a" o "d").`,
+      `6. Varía la dificultad: algunas fáciles, otras más desafiantes.`,
+      ``,
+      `Devuelve SOLAMENTE un array JSON válido, sin markdown, sin etiquetas de código, sin texto adicional.`,
+      `Cada elemento debe tener:`,
+      `- "question": string clara y sin ambigüedad`,
+      `- "options": array de 4 strings`,
+      `- "correctIndex": número 0-3`,
+      ``,
+      `Ejemplo:`,
+      `[{"question":"¿Qué es una variable en programación?","options":["Un valor que cambia","Un espacio de memoria con nombre","Un tipo de dato","Un bucle"],"correctIndex":1}]`,
+    ].join("\n");
 
     const response = await getGroq().chat.completions.create({
       messages: [
-        {
-          role: "system",
-          content:
-            `Eres un generador de quizzes educativos. Genera ${count} preguntas de opción múltiple. Devuelve SOLAMENTE un array JSON, sin markdown ni explicaciones. Cada elemento del array debe ser un objeto con: question (string), options (array de 4 strings), correctIndex (number 0-3). Ejemplo: [{\"question\":\"...\",\"options\":[\"a\",\"b\",\"c\",\"d\"],\"correctIndex\":0}]`,
-        },
-        {
-          role: "user",
-          content: `Genera un quiz sobre: ${topic}\n\nBasado en este contenido:\n${content}`,
-        },
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: `Tema: ${topic}\n\nContenido:\n${content}\n\nGenera ${count} preguntas de opción múltiple basadas en este contenido.` },
       ],
       model: "llama-3.1-8b-instant",
+      temperature: 0.7,
     });
 
     const raw = response.choices[0].message.content;

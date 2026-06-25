@@ -110,5 +110,249 @@
     },
     "id": 1782350126875,
     "submittedAt": "2026-06-25T01:15:26.875Z"
+  },
+  {
+    "studentName": "alumno",
+    "topic": "Cpu",
+    "score": 0,
+    "total": 10,
+    "questions": [
+      {
+        "question": "¿Cuál fue el primer microprocesador comercialmente disponible?",
+        "options": [
+          "Intel 4004",
+          "Intel 8008",
+          "Intel 8080",
+          "ARM 700"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué tipo de arquitectura utiliza el procesador Intel Core?",
+        "options": [
+          "x86/x64",
+          "ARM",
+          "CISC",
+          "RISC"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Cuál es el propósito de la Unidad de Control en un microprocesador?",
+        "options": [
+          "Realizar operaciones matemáticas",
+          "Decodificar instrucciones del programa",
+          "Gestionar la ejecución de instrucciones",
+          "Almacenar datos"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué tipo de microprocesadores utiliza una arquitectura reducida de instrucciones?",
+        "options": [
+          "CISC",
+          "RISC",
+          "x86/x64",
+          "ARM"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué es el conjunto de instrucciones utilizado por los procesadores Intel x86?",
+        "options": [
+          "CISC",
+          "RISC",
+          "x86/x64",
+          "ARM"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué tipo de microprocesadores están diseñados para manejar cargas de trabajo intensivas y operaciones continuas?",
+        "options": [
+          "Procesadores de escritorio",
+          "Procesadores móviles",
+          "Procesadores de servidor",
+          "Procesadores de juego"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué técnica permite la ejecución de varias etapas de diferentes instrucciones simultáneamente?",
+        "options": [
+          "Pipelines",
+          "Multithreading",
+          "Ciclo de reloj",
+          "DVFS"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué es el proceso de ajustar dinámicamente la frecuencia y el voltaje del procesador?",
+        "options": [
+          "DVFS",
+          "Multithreading",
+          "Pipelines",
+          "Ciclo de reloj"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué fabricante es especializado en el diseño de arquitecturas de procesadores de bajo consumo?",
+        "options": [
+          "Intel",
+          "AMD",
+          "ARM Holdings",
+          "Apple"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué serie de procesadores desarrolla Apple para dispositivos móviles y computadoras personales?",
+        "options": [
+          "serie A",
+          "serie B",
+          "serie C",
+          "serie M"
+        ],
+        "correctIndex": 0
+      }
+    ],
+    "userAnswers": {
+      "0": 1,
+      "1": 1,
+      "2": 0,
+      "3": 3,
+      "4": 2,
+      "5": 0,
+      "6": 1,
+      "7": 3,
+      "8": 1,
+      "9": 3
+    },
+    "id": 1782385378588,
+    "submittedAt": "2026-06-25T11:02:58.588Z"
+  },
+  {
+    "studentName": "alumno",
+    "topic": "prueba de célula",
+    "score": 5,
+    "total": 10,
+    "questions": [
+      {
+        "question": "¿Qué caracteriza a las células procariotas?",
+        "options": [
+          "Tienen núcleo centralizado",
+          "Son más grandes que las eucariotas",
+          "Carecen de estructuras celulares definidas",
+          "Son capaces de realizar fotosíntesis"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "El proceso por el que las células generan energía a partir de la química de los alimentos es denominado:",
+        "options": [
+          "Fotrespiración",
+          "Respiración celular",
+          "Fotosíntesis",
+          "Procesos de decromatización"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "Según la teoría endosimbiótica, los mitocondrios se originaron como una:",
+        "options": [
+          "Bacteria gram negativas",
+          "Bacteria gram positivas",
+          "Alga fotosintética",
+          "Fusión de dos bacterias"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "Las células eucariotas tienen una:",
+        "options": [
+          "Mitosis",
+          "Meiosis",
+          "Núcleo",
+          "Retículo endoplasmático"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "En los seres vivos, las células procariotas se encuentran en una mayor proporción que las eucariotas en:",
+        "options": [
+          "Ecosistemas acuáticos",
+          "Ecosistemas de alta montaña",
+          "Ambientes extremos",
+          "Todas las células viven en medio acuático"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "El proceso por el cual las plantas convierten la energía del sol en química es llamado:",
+        "options": [
+          "Fototrofismo",
+          "Heterotrofismo",
+          "Autotrofismo",
+          "Quimiotrofismo"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "Los componentes de las células eucariotas que están separados por membranas tienen una función específica: a la respiración, a la regulación de la temperatura, a la síntesis de proteínas o a la fotosíntesis",
+        "options": [
+          "a - la síntesis de proteínas",
+          "b - la regulación de la temperatura",
+          "c - la fotosíntesis",
+          "d - la respiración"
+        ],
+        "correctIndex": 3
+      },
+      {
+        "question": "A continuación, hay un listado de las opciones, que de acuerdo a la Teoría Endosimbiótica, podrían haber sido los primeros organismos que dieron origen a las células eucariotas.",
+        "options": [
+          "Mitocondria y cloro-plasto",
+          "Retículo endoplasmático y aparato de Golgi",
+          "Citosol, ribosomas y lisosomas",
+          "Mitocondria y ribosomas"
+        ],
+        "correctIndex": 3
+      },
+      {
+        "question": "En las células fotosintéticas, la membrana interna del tilacoide se llama:",
+        "options": [
+          "Gránulo de clorofila",
+          "Tilacoide",
+          "Tegumento",
+          "Gránulo de esporas"
+        ],
+        "correctIndex": 3
+      },
+      {
+        "question": "La membrana celular es la estructura más interna de la célula eucariota y está compuesta por:",
+        "options": [
+          "Aparato de Golgi, lisosomas, ribosomas y retículo endoplasmático",
+          "Gránulos vesiculares, lisosomas, retículo endoplasmático y cloroplastos",
+          "Ribosomas, lisosomas, retículo endoplasmático y gránulos vesiculares",
+          "Tilacoide, lisosomas, ribosomas y retículo endoplasmático"
+        ],
+        "correctIndex": 0
+      }
+    ],
+    "userAnswers": {
+      "0": 2,
+      "1": 1,
+      "2": 1,
+      "3": 2,
+      "4": 2,
+      "5": 0,
+      "6": 3,
+      "7": 0,
+      "8": 0,
+      "9": 0
+    },
+    "id": 1782386419946,
+    "submittedAt": "2026-06-25T11:20:19.946Z"
   }
 ]
