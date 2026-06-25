@@ -72,6 +72,7 @@ function TabIcon({ id }) {
     chat: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>,
     results: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>,
     juegos: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+    reels: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>,
   };
   return icons[id] || null;
 }
@@ -92,25 +93,30 @@ function Login({ onLogin }) {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
+  const [isRegister, setIsRegister] = useState(false);
+  const [code, setCode] = useState("");
+  const [registering, setRegistering] = useState(false);
 
-  const TEACHER_CREDENTIALS = { user: "docente", pass: "docente123" };
-  const STUDENT_CREDENTIALS = { user: "alumno", pass: "alumno123" };
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-    if (role === "teacher") {
-      if (name === TEACHER_CREDENTIALS.user && password === TEACHER_CREDENTIALS.pass) {
-        onLogin(name, "teacher");
-      } else {
-        setError("Credenciales de docente incorrectas");
-      }
+    if (isRegister) {
+      if (!code.trim()) { setError("Ingresa el código de registro"); return; }
+      setRegistering(true);
+      try {
+        const res = await fetch("/api/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "register", username: name, password, role, code }) });
+        const data = await res.json();
+        if (data.ok) { setIsRegister(false); setCode(""); setError(""); alert("Registro exitoso. Ahora inicia sesión."); }
+        else setError(data.error || "Error al registrarse");
+      } catch { setError("Error de conexión"); }
+      setRegistering(false);
     } else {
-      if (name === STUDENT_CREDENTIALS.user && password === STUDENT_CREDENTIALS.pass) {
-        onLogin(name, "student");
-      } else {
-        setError("Credenciales de alumno incorrectas");
-      }
+      try {
+        const res = await fetch("/api/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "login", username: name, password, role }) });
+        const data = await res.json();
+        if (data.ok) onLogin(name, data.role);
+        else setError(data.error || "Credenciales incorrectas");
+      } catch { setError("Error de conexión"); }
     }
   };
 
@@ -155,12 +161,30 @@ function Login({ onLogin }) {
             </div>
           </div>
 
+          {isRegister && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Código de registro</label>
+              <div className="relative">
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                <input type="text" value={code} onChange={(e) => setCode(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none transition" placeholder={role === "teacher" ? "Código de docente" : "Código de alumno"} />
+              </div>
+            </div>
+          )}
+
           {error && <p className="text-red-500 text-sm text-center bg-red-50 py-2 rounded-lg">{error}</p>}
 
-          <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2.5 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition shadow-lg shadow-indigo-200">Iniciar Sesión</button>
+          <button type="submit" disabled={registering} className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2.5 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition shadow-lg shadow-indigo-200 disabled:opacity-50">
+            {registering ? "Registrando..." : isRegister ? "Registrarse" : "Iniciar Sesión"}
+          </button>
         </form>
 
-        <div className="mt-6 p-3 bg-gray-50 rounded-xl text-xs text-gray-400 text-center">
+        <div className="mt-4 text-center">
+          <button onClick={() => { setIsRegister(!isRegister); setError(""); setCode(""); }} className="text-sm text-indigo-600 hover:text-indigo-800 transition">
+            {isRegister ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate"}
+          </button>
+        </div>
+
+        <div className="mt-4 p-3 bg-gray-50 rounded-xl text-xs text-gray-400 text-center">
           <p><strong>Demo:</strong> <span className="font-mono">docente</span> / <span className="font-mono">docente123</span> <span className="mx-1">|</span> <span className="font-mono">alumno</span> / <span className="font-mono">alumno123</span></p>
         </div>
       </div>
@@ -255,10 +279,25 @@ function TeacherDashboard({ user, onLogout }) {
   const [contextText, setContextText] = useState("");
   const [contextUrl, setContextUrl] = useState("");
   const [fetchingUrl, setFetchingUrl] = useState(false);
+  const [teacherNotifs, setTeacherNotifs] = useState(0);
+  const [teacherNotifList, setTeacherNotifList] = useState([]);
+  const [showNotifs, setShowNotifs] = useState(false);
   const fileInputRef = useRef(null);
   const chatBottomRef = useRef(null);
 
   useEffect(() => { chatBottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chatMessagesByProf[selectedProfessor]]);
+
+  const loadTeacherNotifs = useCallback(async () => {
+    try { const res = await fetch(`/api/notifications?userName=${user.name}&role=teacher`); const data = await res.json(); setTeacherNotifs(data.length); setTeacherNotifList(data); } catch {}
+  }, [user.name]);
+
+  const checkMissed = useCallback(async () => {
+    try { await fetch("/api/check-missed"); loadTeacherNotifs(); } catch {}
+  }, [loadTeacherNotifs]);
+
+  const markTeacherNotifRead = useCallback(async () => {
+    try { for (const n of teacherNotifList) { await fetch("/api/notifications", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ notifId: n.id, userName: user.name }) }); } setTeacherNotifs(0); setTeacherNotifList([]); } catch {}
+  }, [user.name, teacherNotifList]);
 
   const loadResults = useCallback(async () => {
     try { const res = await fetch("/api/results"); const data = await res.json(); setResults(data); } catch {}
@@ -272,7 +311,7 @@ function TeacherDashboard({ user, onLogout }) {
     try { const res = await fetch("/api/context"); const data = await res.json(); setContextText(data.text || ""); } catch {}
   }, []);
 
-  useEffect(() => { if (activeTab === "results") loadResults(); if (activeTab === "quiz") loadQuizzes(); if (activeTab === "context") loadContext(); }, [activeTab, loadResults, loadQuizzes, loadContext]);
+  useEffect(() => { loadTeacherNotifs(); if (activeTab === "results") { loadResults(); checkMissed(); } if (activeTab === "quiz") loadQuizzes(); if (activeTab === "context") loadContext(); }, [activeTab, loadResults, loadQuizzes, loadContext, loadTeacherNotifs, checkMissed]);
 
   const saveContext = async () => {
     try { await fetch("/api/context", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: contextText }) }); alert("Contexto guardado. Los chatbots ahora usarán este material."); } catch { alert("Error al guardar el contexto"); }
@@ -387,7 +426,7 @@ function TeacherDashboard({ user, onLogout }) {
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       <Sidebar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
       <div className="flex-1 flex flex-col min-h-screen">
-        <DashboardHeader title="Panel Docente" userName={user.name} onLogout={onLogout} />
+        <DashboardHeader title="Panel Docente" userName={user.name} onLogout={onLogout} notifCount={teacherNotifs} onNotifClick={() => { markTeacherNotifRead(); setActiveTab("results"); }} />
         <main className="flex-1 p-4 md:p-6 max-w-5xl w-full mx-auto">
           <MobileNav tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -559,7 +598,7 @@ function TeacherDashboard({ user, onLogout }) {
                   })}
                 </div>
               </div>
-              <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={chatEndRef}>
+              <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={chatBottomRef}>
                 {chatMessages.length === 0 && (
                   <div className="text-center pt-6">
                     <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.avatar} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-32 h-32 mx-auto mb-4 object-contain" />
@@ -595,6 +634,40 @@ function TeacherDashboard({ user, onLogout }) {
           )}
 
           {activeTab === "results" && (
+            <div className="space-y-4">
+              {teacherNotifList.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" /></svg>
+                    Notificaciones
+                  </h2>
+                  <div className="space-y-2">
+                    {teacherNotifList.toReversed().map((n) => (
+                      <div key={n.id} className="p-3 rounded-xl text-sm border text-left">
+                        {n.type === "quiz_completed" && (
+                          <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-green-500 shrink-0" />
+                            <span><strong>{n.studentName}</strong> completó "{n.topic}" — <span className="text-green-600">{n.score}/{n.total}</span></span>
+                          </div>
+                        )}
+                        {n.type === "quiz_missed" && (
+                          <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+                            <span><strong>{n.studentName}</strong> NO entregó "{n.topic}" <span className="text-red-500">(vencido)</span></span>
+                          </div>
+                        )}
+                        {!n.type && (
+                          <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
+                            <span>Nuevo quiz publicado: "{n.topic}"</span>
+                          </div>
+                        )}
+                        <span className="text-xs text-gray-400 ml-6 block mt-0.5">{new Date(n.createdAt).toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2"><TabIcon id="results" /> Resultados de Quizzes</h2>
               {results.length === 0 ? (
@@ -624,6 +697,7 @@ function TeacherDashboard({ user, onLogout }) {
                   ))}
                 </div>
               )}
+            </div>
             </div>
           )}
         </main>
@@ -891,7 +965,25 @@ function StudentDashboard({ user, onLogout }) {
   const [gameTopic, setGameTopic] = useState("");
   const [gameData, setGameData] = useState(null);
   const [gameLoading, setGameLoading] = useState(false);
+  const [reelsTopic, setReelsTopic] = useState("");
+  const [reelsContent, setReelsContent] = useState("");
+  const [reels, setReels] = useState(null);
+  const [reelsLoading, setReelsLoading] = useState(false);
+  const [currentReel, setCurrentReel] = useState(0);
+  const [reelsMuted, setReelsMuted] = useState(false);
   const chatBottomRef = useRef(null);
+  const reelsScrollRef = useRef(null);
+
+  useEffect(() => {
+    if (!reels?.reels?.[currentReel] || reelsMuted || activeTab !== "reels") return;
+    window.speechSynthesis.cancel();
+    const text = `${reels.reels[currentReel].title}. ${reels.reels[currentReel].content}. ${reels.reels[currentReel].tip || ""}`;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "es-ES";
+    utterance.rate = 1.1;
+    window.speechSynthesis.speak(utterance);
+    return () => window.speechSynthesis.cancel();
+  }, [currentReel, reels, reelsMuted, activeTab]);
 
   useEffect(() => { chatBottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chatMessagesByProf[selectedProfessor]]);
 
@@ -924,6 +1016,13 @@ function StudentDashboard({ user, onLogout }) {
   }, [user.name]);
 
   useEffect(() => { if (activeTab === "results") loadStudentResults(); if (activeTab === "chat") checkContext(); loadNotifs(); }, [activeTab, loadStudentResults, checkContext, loadNotifs]);
+
+  const generateReels = async () => {
+    if (!reelsContent.trim() || !reelsTopic.trim()) return;
+    setReelsLoading(true); setReels(null); setCurrentReel(0);
+    try { const res = await fetch("/api/generate-reels", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: reelsContent, topic: reelsTopic }) }); const data = await res.json(); setReels(data); } catch { alert("Error al generar los reels"); }
+    setReelsLoading(false);
+  };
 
   const generateGame = async () => {
     if (!gameContent.trim() || !gameTopic.trim()) return;
@@ -965,6 +1064,7 @@ function StudentDashboard({ user, onLogout }) {
   const tabs = [
     { id: "chat", label: "Chatbots" },
     { id: "quiz", label: "Quizzes" },
+    { id: "reels", label: "Reels" },
     { id: "juegos", label: "Juegos" },
     { id: "results", label: "Mis Resultados" },
   ];
@@ -1107,6 +1207,72 @@ function StudentDashboard({ user, onLogout }) {
               )}
 
               {quiz?.error && <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">{quiz.error}</div>}
+            </div>
+          )}
+
+          {activeTab === "reels" && (
+            <div className="space-y-4">
+              {!reels ? (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2"><TabIcon id="reels" /> Reels Educativos con IA</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema</label>
+                      <input type="text" value={reelsTopic} onChange={(e) => setReelsTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" placeholder="Ej: Redes de computadoras" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido</label>
+                      <textarea value={reelsContent} onChange={(e) => setReelsContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido educativo para generar los reels..." />
+                    </div>
+                    <button onClick={generateReels} disabled={reelsLoading || !reelsContent.trim() || !reelsTopic.trim()} className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{reelsLoading ? "Generando..." : "Generar Reels"}</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative">
+                  {reels.error ? (
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                      <p className="text-red-500 text-sm">{reels.error}</p>
+                      <button onClick={() => setReels(null)} className="mt-3 text-indigo-600 text-sm hover:underline">Volver</button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between mb-3 px-1">
+                        <button onClick={() => { window.speechSynthesis.cancel(); setReels(null); }} className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                          Nuevos reels
+                        </button>
+                        <div className="flex items-center gap-3">
+                          <button onClick={() => setReelsMuted((m) => !m)} className="text-sm text-gray-500 hover:text-gray-700 transition" title={reelsMuted ? "Activar audio" : "Silenciar"}>
+                            {reelsMuted ? (
+                              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
+                            ) : (
+                              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                            )}
+                          </button>
+                          <span className="text-xs text-gray-400">{currentReel + 1} / {reels.reels?.length || 0}</span>
+                        </div>
+                      </div>
+                      <div ref={reelsScrollRef} onScroll={() => { if (reelsScrollRef.current && reels?.reels) { const idx = Math.round(reelsScrollRef.current.scrollTop / reelsScrollRef.current.clientHeight); setCurrentReel(Math.min(idx, reels.reels.length - 1)); } }} className="snap-y snap-mandatory h-[calc(100vh-16rem)] overflow-y-scroll rounded-2xl scroll-smooth" style={{ scrollbarWidth: "none" }}>
+                        {reels.reels?.map((reel, i) => (
+                          <div key={i} className="snap-start h-full flex items-center justify-center p-2 first:pt-0 last:pb-0">
+                            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl p-8 w-full max-w-md mx-auto min-h-[28rem] flex flex-col items-center justify-center text-white shadow-xl">
+                              <span className="text-6xl mb-6">{reel.emoji}</span>
+                              <h3 className="text-xl font-bold text-center mb-4 leading-tight">{reel.title}</h3>
+                              <p className="text-base text-center leading-relaxed text-white/90 mb-6 max-w-sm">{reel.content}</p>
+                              {reel.tip && (
+                                <div className="bg-white/15 backdrop-blur-sm rounded-xl p-4 w-full max-w-sm">
+                                  <p className="text-xs font-semibold uppercase tracking-wider text-white/70 mb-1">💡 Dato Clave</p>
+                                  <p className="text-sm text-white/90 leading-relaxed">{reel.tip}</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

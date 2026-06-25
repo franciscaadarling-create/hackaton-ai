@@ -7,7 +7,9 @@
     "publishedAt": "2026-06-25T12:13:32.227Z",
     "createdAt": "2026-06-25T12:13:32.614Z",
     "readBy": [
-      "alumno"
+      "alumno",
+      "melina_biegun",
+      "agustina_romano"
     ]
   },
   {
@@ -18,7 +20,66 @@
     "publishedAt": "2026-06-25T12:16:40.417Z",
     "createdAt": "2026-06-25T12:16:40.733Z",
     "readBy": [
-      "alumno"
+      "alumno",
+      "melina_biegun",
+      "agustina_romano"
     ]
+  },
+  {
+    "id": 1782390120544,
+    "createdAt": "2026-06-25T12:22:00.544Z",
+    "readBy": [],
+    "type": "quiz_missed",
+    "forUser": "docente",
+    "quizId": 1782389800417,
+    "topic": "conceptos basicós de python",
+    "studentName": "alumno",
+    "deadline": "2026-06-25T09:17"
+  },
+  {
+    "id": 1782390491165,
+    "createdAt": "2026-06-25T12:28:11.165Z",
+    "readBy": [],
+    "type": "quiz_completed",
+    "forUser": "docente",
+    "quizId": 1782390491144,
+    "topic": "ciclos",
+    "studentName": "melina_biegun",
+    "score": 6,
+    "total": 10
+  },
+  {
+    "id": 1782391367641,
+    "createdAt": "2026-06-25T12:42:47.641Z",
+    "readBy": [],
+    "type": "quiz_completed",
+    "forUser": "docente",
+    "quizId": 1782391367635,
+    "topic": "ciclos",
+    "studentName": "agustina_romano",
+    "score": 5,
+    "total": 10
+  },
+  {
+    "id": 1782391491089,
+    "createdAt": "2026-06-25T12:44:51.089Z",
+    "readBy": [],
+    "type": "quiz_missed",
+    "forUser": "docente",
+    "quizId": 1782389612227,
+    "topic": "Introducción a Pyhton",
+    "studentName": "agustina_romano",
+    "deadline": "2026-06-25T09:20"
+  },
+  {
+    "id": 1782391491095,
+    "createdAt": "2026-06-25T12:44:51.095Z",
+    "readBy": [],
+    "type": "quiz_missed",
+    "forUser": "docente",
+    "quizId": 1782389800417,
+    "topic": "conceptos basicós de python",
+    "studentName": "agustina_romano",
+    "deadline": "2026-06-25T09:17"
   }
 ]

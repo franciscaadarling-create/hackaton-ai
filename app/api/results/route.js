@@ -17,12 +17,17 @@ async function writeResults(results) {
   await fs.writeFile(DATA_FILE, JSON.stringify(results, null, 2), "utf-8");
 }
 
+import { createNotification } from "@/lib/notifications";
+
 export async function POST(req) {
   const body = await req.json();
   const results = await readResults();
   const entry = { ...body, id: Date.now(), submittedAt: new Date().toISOString() };
   results.push(entry);
   await writeResults(results);
+  try {
+    await createNotification({ type: "quiz_completed", forUser: "docente", quizId: entry.id, topic: body.topic, studentName: body.studentName, score: body.score, total: body.total });
+  } catch {}
   return new Response(JSON.stringify({ success: true }));
 }
 
