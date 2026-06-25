@@ -1,0 +1,99 @@
+[
+  {
+    "id": 1782350041400,
+    "topic": "ciclos",
+    "questions": [
+      {
+        "question": "¿Qué significa iterar en programación?",
+        "options": [
+          "Repetir una acción varias veces",
+          "Automatizar tareas que no se repiten",
+          "Ejecutar un bloque de código solo una vez"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Cómo funciona un ciclo while?",
+        "options": [
+          "Evalúa una condición y ejecuta un bloque de código solo una vez",
+          "Ejecuta un bloque de código varias veces hasta que una condición se cumpla",
+          "No hay forma de ejecutar un bloque de código varias veces en programación"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué es un ciclo acotado?",
+        "options": [
+          "Un ciclo que nunca terminals",
+          "Un ciclo que se repite un número fijo de veces",
+          "Un ciclo que se repite mientras una condición sea verdadera"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué pasa en un ciclo acotado si la condición se cumple en cada repetición?",
+        "options": [
+          "El ciclo se detiene solo cuando se cumple una condición determinada",
+          "El ciclo no termina nunca",
+          "El ciclo sigue repitiéndose indefinidamente"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué es un ciclo infinito?",
+        "options": [
+          "Un ciclo que se repite un número fijo de veces",
+          "Un ciclo que se repite mientras una condición sea verdadera hasta que cambie",
+          "Un ciclo que nunca termina"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Por qué es importante asegurarse de que el cuerpo de un ciclo cambie algo que pueda hacer que la condición se vuelva falsa?",
+        "options": [
+          "Para evitar ciclos infinitos",
+          "Para asegurarse de que el programa funcione correctamente",
+          "No es importante"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué es lo que cambia en cada repetición de un ciclo acotado?",
+        "options": [
+          "La condición que se evalúa",
+          "El valor de una variable interna del ciclo",
+          "El valor de una variable externa al ciclo"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué es lo que define el número de repeticiones de un ciclo acotado?",
+        "options": [
+          "La condición que se evalúa",
+          "El valor de una variable externa al ciclo",
+          "Un número fijo de veces establecido al inicio del ciclo"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué es lo que define la condición de parada de un ciclo no acotado?",
+        "options": [
+          "Un número fijo de veces",
+          "Un condición dinámica que cambia en cada repetición",
+          "Un valor establecido al inicio del ciclo"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué es lo que evita que un ciclo se convierta en infinito?",
+        "options": [
+          "Un número fijo de veces establecido al inicio del ciclo",
+          "Un condición dinámica que cambia en cada repetición",
+          "El cuerpo del ciclo que cambia algo que hace que la condición se vuelva falsa"
+        ],
+        "correctIndex": 2
+      }
+    ],
+    "publishedAt": "2026-06-25T01:14:01.400Z"
+  }
+]
