@@ -18,5 +18,11 @@
     "username": "agustina_romano",
     "password": "agustina",
     "role": "student"
+  },
+  {
+    "username": "meli_biegun",
+    "password": "uwu",
+    "role": "student",
+    "level": "3ro"
   }
 ]

@@ -17,15 +17,24 @@ async function writeQuizzes(quizzes) {
   await fs.writeFile(DATA_FILE, JSON.stringify(quizzes, null, 2), "utf-8");
 }
 
-export async function GET() {
-  const quizzes = await readQuizzes();
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const level = searchParams.get("level");
+  const subject = searchParams.get("subject");
+  let quizzes = await readQuizzes();
+  if (level) {
+    quizzes = quizzes.filter((q) => !q.level || q.level === level);
+  }
+  if (subject) {
+    quizzes = quizzes.filter((q) => q.subject === subject);
+  }
   return new Response(JSON.stringify(quizzes));
 }
 
 export async function POST(req) {
-  const { topic, questions, deadline } = await req.json();
+  const { topic, questions, deadline, level, subject } = await req.json();
   const quizzes = await readQuizzes();
-  const quiz = { id: Date.now(), topic, questions, publishedAt: new Date().toISOString(), deadline: deadline || null };
+  const quiz = { id: Date.now(), topic, questions, publishedAt: new Date().toISOString(), deadline: deadline || null, level: level || null, subject: subject || null };
   quizzes.push(quiz);
   await writeQuizzes(quizzes);
   return new Response(JSON.stringify(quiz));

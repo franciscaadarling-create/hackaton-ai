@@ -15,10 +15,10 @@ Devuelve SOLAMENTE un array JSON, sin markdown ni explicaciones.
 Cada elemento: {"word": "palabra en MAYÚSCULAS (1 palabra, sin espacios)", "hint": "pista corta (max 10 palabras)"}
 Ejemplo: [{"word":"VARIABLE","hint":"Espacio de memoria con nombre"}]`,
 
-  speed: `Genera 8 preguntas de opción múltiple para un quiz a contrarreloj.
+  wordsearch: `Genera 8 palabras para una sopa de letras educativa.
 Devuelve SOLAMENTE un array JSON, sin markdown ni explicaciones.
-Cada elemento: {"question": "pregunta", "options": ["a","b","c","d"], "correctIndex": 0}
-Ejemplo: [{"question":"¿Qué es una variable?","options":["Espacio de memoria","Un bucle","Un tipo","Una función"],"correctIndex":0}]`,
+Cada elemento: {"word": "palabra en MAYÚSCULAS (max 10 letras, sin espacios)", "hint": "pista corta (max 12 palabras)"}
+Ejemplo: [{"word":"VARIABLE","hint":"Espacio de memoria con nombre"}]`,
 };
 
 export async function POST(req) {

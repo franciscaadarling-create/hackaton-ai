@@ -20,7 +20,7 @@ async function ensureSeed() {
     if (users.length === 0) {
       await writeUsers([
         { username: "docente", password: "docente123", role: "teacher" },
-        { username: "alumno", password: "alumno123", role: "student" },
+        { username: "alumno", password: "alumno123", role: "student", level: "3ro" },
       ]);
     }
   } catch {}
@@ -29,7 +29,8 @@ async function ensureSeed() {
 export async function POST(req) {
   try {
     await ensureSeed();
-    const { action, username, password, role, code } = await req.json();
+    const body = await req.json();
+    const { action, username, password, role, code, level } = body;
     const users = await readUsers();
 
     if (action === "register") {
@@ -42,7 +43,9 @@ export async function POST(req) {
       if (role === "student" && code !== STUDENT_CODE) {
         return new Response(JSON.stringify({ error: "Código de alumno incorrecto" }), { status: 400 });
       }
-      users.push({ username, password, role });
+      const user = { username, password, role };
+      if (role === "student") user.level = level || "3ro";
+      users.push(user);
       await writeUsers(users);
       return new Response(JSON.stringify({ ok: true }));
     }
@@ -52,7 +55,17 @@ export async function POST(req) {
       if (!user) {
         return new Response(JSON.stringify({ error: "Credenciales incorrectas" }), { status: 401 });
       }
-      return new Response(JSON.stringify({ ok: true, role: user.role }));
+      return new Response(JSON.stringify({ ok: true, role: user.role, level: user.level || null }));
+    }
+
+    if (action === "update-level") {
+      const user = users.find((u) => u.username === username);
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Usuario no encontrado" }), { status: 404 });
+      }
+      user.level = level;
+      await writeUsers(users);
+      return new Response(JSON.stringify({ ok: true }));
     }
 
     return new Response(JSON.stringify({ error: "Acción inválida" }), { status: 400 });

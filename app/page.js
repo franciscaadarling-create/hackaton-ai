@@ -82,7 +82,7 @@ export default function Home() {
   const [user, setUser] = useState({ name: "", role: "" });
 
   if (view === "login") {
-    return <Login onLogin={(name, r) => { setUser({ name, role: r }); setView(r === "teacher" ? "teacher-dashboard" : "student-dashboard"); }} />;
+    return <Login onLogin={(name, r, lvl) => { setUser({ name, role: r, level: lvl || null }); setView(r === "teacher" ? "teacher-dashboard" : "student-dashboard"); }} />;
   }
   if (user.role === "teacher") return <TeacherDashboard user={user} onLogout={() => setView("login")} />;
   return <StudentDashboard user={user} onLogout={() => setView("login")} />;
@@ -114,33 +114,33 @@ function Login({ onLogin }) {
       try {
         const res = await fetch("/api/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "login", username: name, password, role }) });
         const data = await res.json();
-        if (data.ok) onLogin(name, data.role);
+        if (data.ok) onLogin(name, data.role, data.level);
         else setError(data.error || "Credenciales incorrectas");
       } catch { setError("Error de conexión"); }
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-10 left-10 w-72 h-72 bg-indigo-500 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-500 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-gradient-to-br from-[#0C043F] to-[#e71367] flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-[#e71367] rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#0C043F] rounded-full blur-3xl" />
       </div>
       <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 w-full max-w-md relative z-10 animate-in slide-in-from-bottom-4 duration-500">
         <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-            <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+          <div className="mx-auto w-20 h-20 mb-4">
+            <img src="/logo/images.png" alt="EduQuiz AI" className="w-full h-full object-contain drop-shadow-lg" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">EduQuiz AI</h1>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#0C043F] to-[#e71367] bg-clip-text text-transparent">TicQuiz IA</h1>
           <p className="text-gray-500 mt-1">Plataforma Educativa con Inteligencia Artificial</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div className="flex gap-2 bg-gray-100 rounded-xl p-1">
-            <button type="button" onClick={() => setRole("student")} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${role === "student" ? "bg-white shadow text-indigo-700" : "text-gray-500 hover:text-gray-700"}`}>
+            <button type="button" onClick={() => setRole("student")} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${role === "student" ? "bg-white shadow text-[#0C043F]" : "text-gray-500 hover:text-gray-700"}`}>
               <span className="block text-lg mb-0.5">🎓</span> Alumno
             </button>
-            <button type="button" onClick={() => setRole("teacher")} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${role === "teacher" ? "bg-white shadow text-indigo-700" : "text-gray-500 hover:text-gray-700"}`}>
+            <button type="button" onClick={() => setRole("teacher")} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${role === "teacher" ? "bg-white shadow text-[#0C043F]" : "text-gray-500 hover:text-gray-700"}`}>
               <span className="block text-lg mb-0.5">👨‍🏫</span> Docente
             </button>
           </div>
@@ -149,7 +149,7 @@ function Login({ onLogin }) {
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Usuario</label>
             <div className="relative">
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none transition" placeholder={role === "teacher" ? "docente" : "alumno"} required />
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none transition" placeholder={role === "teacher" ? "docente" : "alumno"} required />
             </div>
           </div>
 
@@ -157,7 +157,7 @@ function Login({ onLogin }) {
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Contraseña</label>
             <div className="relative">
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none transition" placeholder="••••••" required />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none transition" placeholder="••••••" required />
             </div>
           </div>
 
@@ -166,20 +166,20 @@ function Login({ onLogin }) {
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Código de registro</label>
               <div className="relative">
                 <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                <input type="text" value={code} onChange={(e) => setCode(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none transition" placeholder={role === "teacher" ? "Código de docente" : "Código de alumno"} />
+                <input type="text" value={code} onChange={(e) => setCode(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none transition" placeholder={role === "teacher" ? "Código de docente" : "Código de alumno"} />
               </div>
             </div>
           )}
 
           {error && <p className="text-red-500 text-sm text-center bg-red-50 py-2 rounded-lg">{error}</p>}
 
-          <button type="submit" disabled={registering} className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2.5 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition shadow-lg shadow-indigo-200 disabled:opacity-50">
+          <button type="submit" disabled={registering} className="w-full bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white py-2.5 rounded-xl font-semibold hover:from-[#0C043F]/90 hover:to-[#e71367]/90 transition shadow-lg shadow-[#e71367]/20 disabled:opacity-50">
             {registering ? "Registrando..." : isRegister ? "Registrarse" : "Iniciar Sesión"}
           </button>
         </form>
 
         <div className="mt-4 text-center">
-          <button onClick={() => { setIsRegister(!isRegister); setError(""); setCode(""); }} className="text-sm text-indigo-600 hover:text-indigo-800 transition">
+          <button onClick={() => { setIsRegister(!isRegister); setError(""); setCode(""); }} className="text-sm text-[#0C043F] hover:text-[#0C043F] transition">
             {isRegister ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate"}
           </button>
         </div>
@@ -195,14 +195,12 @@ function Login({ onLogin }) {
 function Sidebar({ tabs, activeTab, onTabChange }) {
   return (
     <nav className="hidden md:flex flex-col w-56 bg-white border-r border-gray-200 p-3 gap-1">
-      <div className="px-3 py-4 mb-2">
-        <div className="w-9 h-9 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center mb-2">
-          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
-        </div>
-        <p className="text-sm font-bold text-gray-800">EduQuiz AI</p>
+      <div className="px-3 py-4 mb-2 flex items-center gap-3">
+        <img src="/logo/images.png" alt="TicQuiz IA" className="w-9 h-9 object-contain" />
+        <p className="text-sm font-bold text-gray-800">TicQuiz IA</p>
       </div>
       {tabs.map((tab) => (
-        <button key={tab.id} onClick={() => onTabChange(tab.id)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === tab.id ? "bg-indigo-50 text-indigo-700" : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"}`}>
+        <button key={tab.id} onClick={() => onTabChange(tab.id)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === tab.id ? "bg-[#e71367]/10 text-[#0C043F]" : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"}`}>
           <TabIcon id={tab.id} />
           {tab.label}
         </button>
@@ -215,7 +213,7 @@ function MobileNav({ tabs, activeTab, onTabChange }) {
   return (
     <div className="md:hidden flex gap-1 mb-4 bg-white rounded-xl shadow p-1 overflow-x-auto">
       {tabs.map((tab) => (
-        <button key={tab.id} onClick={() => onTabChange(tab.id)} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition whitespace-nowrap ${activeTab === tab.id ? "bg-indigo-600 text-white" : "text-gray-500 hover:text-indigo-600"}`}>
+        <button key={tab.id} onClick={() => onTabChange(tab.id)} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition whitespace-nowrap ${activeTab === tab.id ? "bg-[#0C043F] text-white" : "text-gray-500 hover:text-[#0C043F]"}`}>
           <TabIcon id={tab.id} />
           {tab.label}
         </button>
@@ -228,13 +226,13 @@ function DashboardHeader({ title, userName, onLogout, notifCount, onNotifClick }
   return (
     <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3">
       <div className="max-w-6xl mx-auto flex justify-between items-center">
-        <div className="md:hidden flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+        <div className="flex items-center gap-2">
+          <img src="/logo/images.png" alt="TicQuiz IA" className="w-8 h-8 object-contain" />
+          <div>
+            <span className="text-sm md:text-lg font-bold text-gray-800">TicQuiz IA</span>
+            <span className="hidden sm:inline text-xs text-gray-400 ml-2">{title}</span>
           </div>
-          <span className="text-sm font-bold text-gray-800">{title}</span>
         </div>
-        <div className="hidden md:block text-lg font-bold text-gray-800">{title}</div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             {notifCount > 0 && (
@@ -243,8 +241,8 @@ function DashboardHeader({ title, userName, onLogout, notifCount, onNotifClick }
                 <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{notifCount}</span>
               </button>
             )}
-            <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-              <span className="text-sm font-semibold text-indigo-600">{userName.charAt(0).toUpperCase()}</span>
+            <div className="w-8 h-8 bg-[#0C043F]/10 rounded-full flex items-center justify-center">
+              <span className="text-sm font-semibold text-[#0C043F]">{userName.charAt(0).toUpperCase()}</span>
             </div>
             <span className="text-sm text-gray-600 hidden sm:block">{userName}</span>
           </div>
@@ -276,6 +274,8 @@ function TeacherDashboard({ user, onLogout }) {
   const [publishing, setPublishing] = useState(false);
   const [questionCount, setQuestionCount] = useState(5);
   const [deadline, setDeadline] = useState("");
+  const [quizLevel, setQuizLevel] = useState("3ro");
+  const [quizSubject, setQuizSubject] = useState("Hardware");
   const [contextText, setContextText] = useState("");
   const [contextUrl, setContextUrl] = useState("");
   const [fetchingUrl, setFetchingUrl] = useState(false);
@@ -372,12 +372,12 @@ function TeacherDashboard({ user, onLogout }) {
     if (!quiz || quiz.error) return; setPublishing(true);
     try {
       const qTopic = selectedContentIds.length > 0 ? savedContentList.filter((c) => selectedContentIds.includes(c.id)).map((c) => c.topic).join(" + ") : topic;
-      const res = await fetch("/api/quizzes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic: qTopic, questions: quiz, deadline: deadline || null }) });
+      const res = await fetch("/api/quizzes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic: qTopic, questions: quiz, deadline: deadline || null, level: quizLevel, subject: quizSubject }) });
       if (deadline) {
         const published = await res.json();
         await fetch("/api/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ quizId: published.id, topic: qTopic, deadline, publishedAt: published.publishedAt }) });
       }
-      setQuiz(null); loadQuizzes(); setDeadline(""); alert("Quiz publicado. Los alumnos ya pueden verlo.");
+      setQuiz(null); loadQuizzes(); setDeadline(""); setQuizLevel("3ro"); setQuizSubject("Hardware"); alert("Quiz publicado. Los alumnos ya pueden verlo.");
     } catch { alert("Error al publicar el quiz"); }
     setPublishing(false);
   };
@@ -436,7 +436,7 @@ function TeacherDashboard({ user, onLogout }) {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema / Título</label>
-                  <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" placeholder="Ej: Introducción a Python" />
+                  <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder="Ej: Introducción a Python" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Archivo (.txt, .pdf, .png, .jpg)</label>
@@ -447,12 +447,12 @@ function TeacherDashboard({ user, onLogout }) {
                       Seleccionar archivo
                     </button>
                     {fileName && <span className="text-sm text-gray-500 truncate max-w-[200px]">{fileName}</span>}
-                    {uploading && <span className="text-sm text-indigo-500 animate-pulse">Procesando...</span>}
+                    {uploading && <span className="text-sm text-[#e71367] animate-pulse">Procesando...</span>}
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido</label>
-                  <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={8} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none resize-y" placeholder="Escribe, pega o sube un archivo (.txt, .pdf, imagen) con el contenido educativo..." />
+                  <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={8} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y" placeholder="Escribe, pega o sube un archivo (.txt, .pdf, imagen) con el contenido educativo..." />
                 </div>
                 <button onClick={saveContent} className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-green-600 hover:to-emerald-700 transition shadow-sm">Guardar Contenido</button>
                 {savedContentList.length > 0 && (
@@ -480,9 +480,9 @@ function TeacherDashboard({ user, onLogout }) {
                   <div className="mb-4 p-4 bg-gray-50 rounded-xl">
                     <p className="text-sm font-medium text-gray-600 mb-2">Agregar contenido guardado:</p>
                     {savedContentList.map((item) => (
-                      <button key={item.id} onClick={() => addContentToContext(item)} className="w-full text-left flex justify-between items-center py-1.5 px-2 text-sm hover:bg-indigo-50 rounded-lg transition border-b border-gray-100 last:border-0">
+                      <button key={item.id} onClick={() => addContentToContext(item)} className="w-full text-left flex justify-between items-center py-1.5 px-2 text-sm hover:bg-[#e71367]/10 rounded-lg transition border-b border-gray-100 last:border-0">
                         <span className="text-gray-700">{item.topic}</span>
-                        <span className="text-xs text-indigo-500 hover:text-indigo-700">+ Agregar</span>
+                        <span className="text-xs text-[#e71367] hover:text-[#0C043F]">+ Agregar</span>
                       </button>
                     ))}
                   </div>
@@ -491,17 +491,17 @@ function TeacherDashboard({ user, onLogout }) {
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Importar desde URL (Google Docs, páginas web)</label>
                   <div className="flex gap-2">
-                    <input type="url" value={contextUrl} onChange={(e) => setContextUrl(e.target.value)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" placeholder="https://docs.google.com/document/d/..." />
-                    <button onClick={fetchUrl} disabled={fetchingUrl || !contextUrl.trim()} className="bg-indigo-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-indigo-700 disabled:opacity-50 transition text-sm whitespace-nowrap">{fetchingUrl ? "Importando..." : "Importar"}</button>
+                    <input type="url" value={contextUrl} onChange={(e) => setContextUrl(e.target.value)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder="https://docs.google.com/document/d/..." />
+                    <button onClick={fetchUrl} disabled={fetchingUrl || !contextUrl.trim()} className="bg-[#0C043F] text-white px-4 py-2.5 rounded-xl font-medium hover:bg-[#0C043F]/90 disabled:opacity-50 transition text-sm whitespace-nowrap">{fetchingUrl ? "Importando..." : "Importar"}</button>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido de contexto (editable)</label>
-                  <textarea value={contextText} onChange={(e) => setContextText(e.target.value)} rows={12} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none resize-y font-mono text-sm" placeholder="Agrega aquí el material del curso que los chatbots deben conocer. Puedes pegar texto, importar desde URL o agregar contenido guardado." />
+                  <textarea value={contextText} onChange={(e) => setContextText(e.target.value)} rows={12} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y font-mono text-sm" placeholder="Agrega aquí el material del curso que los chatbots deben conocer. Puedes pegar texto, importar desde URL o agregar contenido guardado." />
                 </div>
 
-                <button onClick={saveContext} className="mt-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-indigo-600 hover:to-purple-700 transition shadow-sm">Guardar Contexto</button>
+                <button onClick={saveContext} className="mt-4 bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white px-6 py-2.5 rounded-xl font-medium hover:from-[#0C043F]/90 hover:to-[#e71367]/90 transition shadow-sm">Guardar Contexto</button>
               </div>
             </div>
           )}
@@ -514,7 +514,7 @@ function TeacherDashboard({ user, onLogout }) {
                   <div className="mb-4 p-4 bg-gray-50 rounded-xl">
                     <p className="text-sm font-medium text-gray-600 mb-2">Seleccionar contenido guardado:</p>
                     {savedContentList.map((item) => (
-                      <label key={item.id} className="flex items-center gap-2 py-1.5 text-sm cursor-pointer hover:text-indigo-600">
+                      <label key={item.id} className="flex items-center gap-2 py-1.5 text-sm cursor-pointer hover:text-[#0C043F]">
                         <input type="checkbox" checked={selectedContentIds.includes(item.id)} onChange={() => setSelectedContentIds((prev) => prev.includes(item.id) ? prev.filter((id) => id !== item.id) : [...prev, item.id])} className="rounded" />
                         <span>{item.topic}</span>
                         <span className="text-gray-400 text-xs ml-auto">{item.date}</span>
@@ -525,27 +525,46 @@ function TeacherDashboard({ user, onLogout }) {
                 <div className="space-y-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema (manual)</label>
-                    <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" placeholder={selectedContentIds.length > 0 ? "O usa el tema de los contenidos seleccionados" : "Ej: Introducción a Python"} />
+                    <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder={selectedContentIds.length > 0 ? "O usa el tema de los contenidos seleccionados" : "Ej: Introducción a Python"} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido (manual)</label>
-                    <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none resize-y" placeholder={selectedContentIds.length > 0 ? "O escribe contenido adicional aquí..." : "Escribe contenido aquí..."} />
+                    <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y" placeholder={selectedContentIds.length > 0 ? "O escribe contenido adicional aquí..." : "Escribe contenido aquí..."} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Cantidad de preguntas</label>
-                    <input type="number" value={questionCount} onChange={(e) => setQuestionCount(Math.max(1, parseInt(e.target.value) || 5))} min={1} max={20} className="w-24 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" />
+                    <input type="number" value={questionCount} onChange={(e) => setQuestionCount(Math.max(1, parseInt(e.target.value) || 5))} min={1} max={20} className="w-24 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" />
                   </div>
                 </div>
-                <button onClick={generateQuiz} disabled={loading} className="mt-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{loading ? "Generando..." : "Generar Quiz"}</button>
+                <button onClick={generateQuiz} disabled={loading} className="mt-4 bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white px-6 py-2.5 rounded-xl font-medium hover:from-[#0C043F]/90 hover:to-[#e71367]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{loading ? "Generando..." : "Generar Quiz"}</button>
               </div>
 
               {quiz && !quiz.error && (
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><TabIcon id="quiz" /> Quiz Generado</h3>
                   <QuizView questions={quiz} />
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-4 grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-600">Curso</label>
+                      <select value={quizLevel} onChange={(e) => setQuizLevel(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none text-sm">
+                        <option value="3ro">3ro</option>
+                        <option value="4to">4to</option>
+                        <option value="5to">5to</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-600">Materia</label>
+                      <select value={quizSubject} onChange={(e) => setQuizSubject(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none text-sm">
+                        <option value="Hardware">Hardware</option>
+                        <option value="Software">Software</option>
+                        <option value="Redes">Redes</option>
+                        <option value="TIMI">TIMI</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-600">Fecha límite (opcional)</label>
-                    <input type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none text-sm" />
+                    <input type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none text-sm" />
                   </div>
                   <button onClick={publishQuiz} disabled={publishing} className="mt-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 transition shadow-sm">{publishing ? "Publicando..." : "Publicar Quiz para Alumnos"}</button>
                 </div>
@@ -561,6 +580,8 @@ function TeacherDashboard({ user, onLogout }) {
                       <div key={q.id} className="flex justify-between items-center p-3 bg-green-50 rounded-xl text-sm border border-green-100">
                         <div>
                           <span className="font-medium text-gray-700">{q.topic}</span>
+                          {q.level && <span className="ml-2 text-xs bg-[#0C043F]/10 text-[#0C043F] px-2 py-0.5 rounded-full font-medium">{q.level}</span>}
+                          {q.subject && <span className="ml-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">{q.subject}</span>}
                           {q.deadline && (
                             <span className={`ml-2 text-xs ${new Date(q.deadline) > new Date() ? "text-orange-500" : "text-red-500"}`}>
                               {new Date(q.deadline) > new Date() ? "⌛ " + new Date(q.deadline).toLocaleString() : "⛔ Vencido"}
@@ -590,7 +611,7 @@ function TeacherDashboard({ user, onLogout }) {
                   {PROFESSORS.map((p) => {
                     const profMsgs = chatMessagesByProf[p.id] || [];
                     return (
-                      <button key={p.id} onClick={() => setSelectedProfessor(p.id)} className={`px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${selectedProfessor === p.id ? "bg-indigo-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                      <button key={p.id} onClick={() => setSelectedProfessor(p.id)} className={`px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${selectedProfessor === p.id ? "bg-[#0C043F] text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                         <span className={`w-2 h-2 rounded-full ${profMsgs.length > 0 ? "bg-green-400" : "bg-gray-300"}`} />
                         {p.name}
                       </button>
@@ -611,7 +632,7 @@ function TeacherDashboard({ user, onLogout }) {
                     {msg.role === "assistant" && (
                       <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.pfp} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-8 h-8 rounded-full object-cover shadow-sm shrink-0" />
                     )}
-                    <div className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user" ? "bg-indigo-600 text-white rounded-br-md shadow-sm" : "bg-gray-50 text-gray-800 rounded-tl-md border border-gray-100 shadow-sm"}`}>
+                    <div className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user" ? "bg-[#0C043F] text-white rounded-br-md shadow-sm" : "bg-gray-50 text-gray-800 rounded-tl-md border border-gray-100 shadow-sm"}`}>
                       <MarkdownMessage content={msg.content} isUser={msg.role === "user"} />
                     </div>
                     {msg.role === "user" && (
@@ -623,8 +644,8 @@ function TeacherDashboard({ user, onLogout }) {
               </div>
               <form onSubmit={sendChatMessage} className="p-4 border-t border-gray-100 bg-gray-50/50">
                 <div className="flex gap-2">
-                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none bg-white text-sm" placeholder={`Pregúntale a ${PROFESSORS.find((p) => p.id === selectedProfessor)?.name}...`} />
-                  <button type="submit" disabled={!chatInput.trim()} className="bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm flex items-center gap-1.5">
+                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none bg-white text-sm" placeholder={`Pregúntale a ${PROFESSORS.find((p) => p.id === selectedProfessor)?.name}...`} />
+                  <button type="submit" disabled={!chatInput.trim()} className="bg-[#0C043F] text-white px-5 py-3 rounded-xl font-medium hover:bg-[#0C043F]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm flex items-center gap-1.5">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                     Enviar
                   </button>
@@ -678,13 +699,13 @@ function TeacherDashboard({ user, onLogout }) {
                     <div key={r.id} className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition">
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-semibold text-indigo-600">{r.studentName.charAt(0).toUpperCase()}</span>
+                          <div className="w-8 h-8 bg-[#0C043F]/10 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-semibold text-[#0C043F]">{r.studentName.charAt(0).toUpperCase()}</span>
                           </div>
                           <div>
                             <span className="font-semibold text-gray-800">{r.studentName}</span>
                             <span className="text-gray-400 mx-2">|</span>
-                            <span className="text-indigo-600 font-medium text-sm">{r.topic}</span>
+                            <span className="text-[#0C043F] font-medium text-sm">{r.topic}</span>
                           </div>
                         </div>
                         <span className="text-xs text-gray-400">{r.submittedAt}</span>
@@ -734,7 +755,7 @@ function QuizView({ questions, studentName, topic, onSubmitted, initialAnswers, 
         return (
           <div key={i} className="border-b border-gray-100 pb-5 last:border-0">
             <p className="font-medium text-gray-800 mb-3 flex items-start gap-2">
-              <span className="w-6 h-6 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">{i + 1}</span>
+              <span className="w-6 h-6 bg-[#0C043F]/10 text-[#0C043F] rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">{i + 1}</span>
               <span>{q.question}</span>
             </p>
             <div className="space-y-2 ml-8">
@@ -743,8 +764,8 @@ function QuizView({ questions, studentName, topic, onSubmitted, initialAnswers, 
                 const isCorrect = submitted && j === q.correctIndex;
                 const isWrong = submitted && isSelected && j !== q.correctIndex;
                 return (
-                  <button key={j} onClick={() => handleAnswer(i, j)} disabled={submitted} className={`w-full text-left px-4 py-3 rounded-xl text-sm border transition flex items-center gap-3 ${isSelected && !submitted ? "border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200" : isCorrect ? "border-green-500 bg-green-50 text-green-800" : isWrong ? "border-red-500 bg-red-50 text-red-800" : submitted && j === q.correctIndex ? "border-green-500 bg-green-50 text-green-800" : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"} ${!submitted && "cursor-pointer"}`}>
-                    <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${isSelected && !submitted ? "border-indigo-500 bg-indigo-500" : isCorrect || (submitted && j === q.correctIndex) ? "border-green-500 bg-green-500" : isWrong ? "border-red-500 bg-red-500" : "border-gray-300"}`}>
+                  <button key={j} onClick={() => handleAnswer(i, j)} disabled={submitted} className={`w-full text-left px-4 py-3 rounded-xl text-sm border transition flex items-center gap-3 ${isSelected && !submitted ? "border-[#0C043F] bg-[#e71367]/10 ring-2 ring-[#e71367]/30" : isCorrect ? "border-green-500 bg-green-50 text-green-800" : isWrong ? "border-red-500 bg-red-50 text-red-800" : submitted && j === q.correctIndex ? "border-green-500 bg-green-50 text-green-800" : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"} ${!submitted && "cursor-pointer"}`}>
+                    <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${isSelected && !submitted ? "border-[#0C043F] bg-[#0C043F]" : isCorrect || (submitted && j === q.correctIndex) ? "border-green-500 bg-green-500" : isWrong ? "border-red-500 bg-red-500" : "border-gray-300"}`}>
                       {(isSelected || isCorrect || (submitted && j === q.correctIndex)) && <span className="w-2 h-2 rounded-full bg-white" />}
                     </span>
                     <span className="flex-1">{opt}</span>
@@ -821,7 +842,7 @@ function MemoryGame({ pairs }) {
           const isFlipped = flipped.includes(card.id) || matched.includes(card.pairIdx);
           return (
             <button key={card.id} onClick={() => handleClick(card)}
-              className={`h-20 rounded-xl text-xs font-medium transition-all duration-300 ${isFlipped ? "bg-indigo-100 text-indigo-800 border border-indigo-300 scale-100" : "bg-indigo-600 text-white hover:bg-indigo-700 scale-95 hover:scale-100"}`}>
+              className={`h-20 rounded-xl text-xs font-medium transition-all duration-300 ${isFlipped ? "bg-[#0C043F]/10 text-[#0C043F] border border-[#0C043F]/50 scale-100" : "bg-[#0C043F] text-white hover:bg-[#0C043F]/90 scale-95 hover:scale-100"}`}>
               {isFlipped ? <span className="block p-1 leading-tight">{card.text}</span> : <span className="text-lg">?</span>}
             </button>
           );
@@ -872,13 +893,13 @@ function HangmanGame({ words }) {
           const isCorrect = used && currentWord.word.includes(l);
           return (
             <button key={l} onClick={() => handleLetter(l)} disabled={used || wrong >= MAX_WRONG}
-              className={`w-8 h-8 rounded-lg text-sm font-medium transition ${used ? (isCorrect ? "bg-green-200 text-green-700" : "bg-red-200 text-red-700") : "bg-gray-100 text-gray-700 hover:bg-indigo-100"}`}>{l}</button>
+              className={`w-8 h-8 rounded-lg text-sm font-medium transition ${used ? (isCorrect ? "bg-green-200 text-green-700" : "bg-red-200 text-red-700") : "bg-gray-100 text-gray-700 hover:bg-[#0C043F]/10"}`}>{l}</button>
           );
         })}
       </div>
       {wrong >= MAX_WRONG && <p className="text-red-600 font-semibold mb-2">¡Perdiste! La palabra era: <span className="font-mono">{currentWord.word}</span></p>}
       {(wrong >= MAX_WRONG || !display.includes("_")) && (
-        <button onClick={() => { setDone((d) => [...d, currentWord.word]); startNew(); }} className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-indigo-700 transition">
+        <button onClick={() => { setDone((d) => [...d, currentWord.word]); startNew(); }} className="bg-[#0C043F] text-white px-4 py-2 rounded-xl text-sm hover:bg-[#0C043F]/90 transition">
           {done.length < words.length - 1 ? "Siguiente palabra" : "Ver resultados"}
         </button>
       )}
@@ -887,57 +908,167 @@ function HangmanGame({ words }) {
   );
 }
 
-function SpeedQuizGame({ questions, onDone }) {
-  const [index, setIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [finished, setFinished] = useState(false);
-  const timerRef = useRef(null);
+function WordSearchGame({ words, onDone }) {
+  const [grid, setGrid] = useState(null);
+  const [found, setFound] = useState([]);
+  const [placedWords, setPlacedWords] = useState([]);
+  const [selecting, setSelecting] = useState(null);
+  const gridRef = useRef(null);
 
   useEffect(() => {
-    if (finished) return;
-    timerRef.current = setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) { clearInterval(timerRef.current); nextQuestion(true); return 0; }
-        return t - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timerRef.current);
-  }, [index, finished]);
+    if (!words || words.length === 0) return;
+    const maxLen = Math.max(...words.map((w) => w.word.length));
+    const size = Math.max(maxLen + 2, 12);
 
-  const nextQuestion = (timedOut) => {
-    if (timedOut) setScore((s) => s);
-    const next = index + 1;
-    if (next >= questions.length) { setFinished(true); clearInterval(timerRef.current); onDone?.(score); }
-    else { setIndex(next); setTimeLeft(30); }
+    const dirs = [
+      [0, 1], [1, 0], [1, 1], [-1, 1],
+      [0, -1], [-1, 0], [-1, -1], [1, -1],
+    ];
+
+    const g = Array.from({ length: size }, () => Array(size).fill(""));
+    const placed = [];
+
+    const sorted = [...words].sort((a, b) => b.word.length - a.word.length);
+
+    for (const w of sorted) {
+      const word = w.word;
+      const dirsShuffled = [...dirs].sort(() => Math.random() - 0.5);
+      let placedWord = false;
+      for (const [dr, dc] of dirsShuffled) {
+        const maxR = dr > 0 ? size - word.length : dr < 0 ? word.length - 1 : size - 1;
+        const minR = dr < 0 ? word.length - 1 : 0;
+        const maxC = dc > 0 ? size - word.length : dc < 0 ? word.length - 1 : size - 1;
+        const minC = dc < 0 ? word.length - 1 : 0;
+        if (maxR < minR || maxC < minC) continue;
+
+        const positions = [];
+        for (let r = minR; r <= maxR; r++) {
+          for (let c = minC; c <= maxC; c++) {
+            let ok = true;
+            for (let k = 0; k < word.length; k++) {
+              const nr = r + k * dr;
+              const nc = c + k * dc;
+              if (g[nr][nc] !== "" && g[nr][nc] !== word[k]) { ok = false; break; }
+            }
+            if (ok) positions.push([r, c]);
+          }
+        }
+        if (positions.length > 0) {
+          const [r, c] = positions[Math.floor(Math.random() * positions.length)];
+          const cells = [];
+          for (let k = 0; k < word.length; k++) {
+            const nr = r + k * dr;
+            const nc = c + k * dc;
+            g[nr][nc] = word[k];
+            cells.push([nr, nc]);
+          }
+          placed.push({ word: w.word, hint: w.hint, cells });
+          placedWord = true;
+          break;
+        }
+      }
+      if (!placedWord) {
+        const [r, c] = [Math.floor(Math.random() * (size - word.length)), Math.floor(Math.random() * (size - word.length))];
+        const cells = [];
+        for (let k = 0; k < word.length; k++) {
+          g[r][c + k] = word[k];
+          cells.push([r, c + k]);
+        }
+        placed.push({ word: w.word, hint: w.hint, cells });
+      }
+    }
+
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (g[r][c] === "") g[r][c] = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+      }
+    }
+    setGrid(g);
+    setPlacedWords(placed);
+    setFound([]);
+  }, [words]);
+
+  const handleCellClick = (r, c) => {
+    if (!selecting) {
+      setSelecting([r, c]);
+    } else {
+      const [sr, sc] = selecting;
+      const dr = Math.sign(r - sr);
+      const dc = Math.sign(c - sc);
+      if (dr === 0 && dc === 0) { setSelecting(null); return; }
+      const len = Math.max(Math.abs(r - sr), Math.abs(c - sc)) + 1;
+      const selectedCells = [];
+      for (let k = 0; k < len; k++) {
+        selectedCells.push([sr + k * dr, sc + k * dc]);
+      }
+
+      const selectedWord = selectedCells.map(([rr, cc]) => grid[rr]?.[cc]).join("");
+      const matchedWord = words.find((w) => !found.includes(w.word) && (selectedWord === w.word || [...selectedWord].reverse().join("") === w.word));
+
+      if (matchedWord) {
+        setFound((prev) => [...prev, matchedWord.word]);
+      }
+      setSelecting(null);
+    }
   };
 
-  const handleAnswer = (optIdx) => {
-    if (optIdx === questions[index].correctIndex) setScore((s) => s + 1);
-    clearInterval(timerRef.current);
-    const next = index + 1;
-    if (next >= questions.length) { setFinished(true); onDone?.(optIdx === questions[index].correctIndex ? score + 1 : score); }
-    else { setIndex(next); setTimeLeft(30); }
+  const isSelected = (r, c) => {
+    if (!selecting) return false;
+    const [sr, sc] = selecting;
+    const dr = Math.sign(r - sr);
+    const dc = Math.sign(c - sc);
+    const len = Math.max(Math.abs(r - sr), Math.abs(c - sc)) + 1;
+    for (let k = 0; k < len; k++) {
+      if (sr + k * dr === r && sc + k * dc === c) return true;
+    }
+    return false;
   };
 
-  if (!questions || questions.length === 0) return null;
-  if (finished) return <p className="text-center text-lg font-semibold text-indigo-700">¡Juego terminado! Puntaje: {score}/{questions.length}</p>;
+  if (!grid || !words) return null;
+
+  const allFound = found.length === words.length;
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-3">
-        <span className="text-sm text-gray-500">Pregunta {index + 1}/{questions.length}</span>
-        <span className={`text-sm font-bold ${timeLeft <= 10 ? "text-red-500" : "text-gray-600"}`}>⏱ {timeLeft}s</span>
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4"><div className="bg-indigo-500 h-1.5 rounded-full transition-all" style={{ width: `${(timeLeft / 30) * 100}%` }} /></div>
-      <p className="font-medium text-gray-800 mb-3">{questions[index].question}</p>
-      <div className="space-y-2">
-        {questions[index].options.map((opt, j) => (
-          <button key={j} onClick={() => handleAnswer(j)} className="w-full text-left px-4 py-3 rounded-xl text-sm border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition">
-            {opt}
-          </button>
-        ))}
-      </div>
+      {allFound ? (
+        <div className="text-center py-4">
+          <p className="text-green-600 font-semibold text-lg">¡Encontraste todas las palabras!</p>
+        </div>
+      ) : (
+        <>
+          <div className="text-sm text-gray-500 mb-3 text-center">
+            {selecting ? "Selecciona la última letra de la palabra" : "Haz clic en la primera letra de una palabra"}
+          </div>
+          <div ref={gridRef} className="grid place-items-center mb-4 select-none" style={{ gridTemplateColumns: `repeat(${grid.length}, minmax(0, 1fr))`, maxWidth: "28rem", margin: "0 auto" }}>
+            {grid.map((row, r) =>
+              row.map((letter, c) => {
+                const isStart = selecting && selecting[0] === r && selecting[1] === c;
+                const inSelection = isSelected(r, c);
+                const isFound = found.some((fw) => placedWords.find((pw) => pw.word === fw)?.cells?.some(([cr, cc]) => cr === r && cc === c));
+                return (
+                  <button key={`${r}-${c}`} onClick={() => handleCellClick(r, c)}
+                    className={`w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 flex items-center justify-center text-xs sm:text-sm font-bold rounded transition-all ${
+                      isFound ? "bg-green-200 text-green-800 border border-green-400 scale-105" :
+                      isStart ? "bg-[#0C043F] text-white scale-110 shadow-md" :
+                      inSelection ? "bg-[#e71367]/20 text-[#0C043F] scale-105" :
+                      "bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100"
+                    }`}>
+                    {letter}
+                  </button>
+                );
+              })
+            )}
+          </div>
+          <div className="space-y-1 max-w-md mx-auto">
+            {words.map((w) => (
+              <div key={w.word} className={`flex justify-between items-center px-3 py-1.5 rounded-lg text-sm ${found.includes(w.word) ? "bg-green-50 text-green-700 line-through" : "bg-gray-50 text-gray-600"}`}>
+                <span className="font-mono font-bold">{w.word}</span>
+                <span className="text-xs">{w.hint}</span>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -971,6 +1102,8 @@ function StudentDashboard({ user, onLogout }) {
   const [reelsLoading, setReelsLoading] = useState(false);
   const [currentReel, setCurrentReel] = useState(0);
   const [reelsMuted, setReelsMuted] = useState(false);
+  const [studentLevel, setStudentLevel] = useState(user.level || "3ro");
+  const [studentSubject, setStudentSubject] = useState("");
   const chatBottomRef = useRef(null);
   const reelsScrollRef = useRef(null);
 
@@ -987,8 +1120,13 @@ function StudentDashboard({ user, onLogout }) {
 
   useEffect(() => { chatBottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chatMessagesByProf[selectedProfessor]]);
 
-  const loadAvailableQuizzes = useCallback(async () => { try { const res = await fetch("/api/quizzes"); const data = await res.json(); setAvailableQuizzes(data); } catch {} }, []);
+  const loadAvailableQuizzes = useCallback(async () => { try { const params = new URLSearchParams({ level: studentLevel }); if (studentSubject) params.set("subject", studentSubject); const res = await fetch(`/api/quizzes?${params}`); const data = await res.json(); setAvailableQuizzes(data); } catch {} }, [studentLevel, studentSubject]);
   useEffect(() => { if (activeTab === "quiz") loadAvailableQuizzes(); }, [activeTab, loadAvailableQuizzes]);
+
+  const updateStudentLevel = async (newLevel) => {
+    setStudentLevel(newLevel);
+    try { await fetch("/api/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "update-level", username: user.name, level: newLevel }) }); } catch {}
+  };
 
   const startTeacherQuiz = (q) => { setSelectedQuizId(q.id); setQuiz(q.questions); setTopic(q.topic); setQuizSubmitted(false); };
 
@@ -1092,7 +1230,7 @@ function StudentDashboard({ user, onLogout }) {
                   {PROFESSORS.map((p) => {
                     const profMsgs = chatMessagesByProf[p.id] || [];
                     return (
-                      <button key={p.id} onClick={() => setSelectedProfessor(p.id)} className={`px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${selectedProfessor === p.id ? "bg-indigo-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                      <button key={p.id} onClick={() => setSelectedProfessor(p.id)} className={`px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${selectedProfessor === p.id ? "bg-[#0C043F] text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                         <span className={`w-2 h-2 rounded-full ${profMsgs.length > 0 ? "bg-green-400" : "bg-gray-300"}`} />
                         {p.name}
                       </button>
@@ -1113,7 +1251,7 @@ function StudentDashboard({ user, onLogout }) {
                     {msg.role === "assistant" && (
                       <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.pfp} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-8 h-8 rounded-full object-cover shadow-sm shrink-0" />
                     )}
-                    <div className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user" ? "bg-indigo-600 text-white rounded-br-md shadow-sm" : "bg-gray-50 text-gray-800 rounded-tl-md border border-gray-100 shadow-sm"}`}>
+                    <div className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user" ? "bg-[#0C043F] text-white rounded-br-md shadow-sm" : "bg-gray-50 text-gray-800 rounded-tl-md border border-gray-100 shadow-sm"}`}>
                       <MarkdownMessage content={msg.content} isUser={msg.role === "user"} />
                     </div>
                     {msg.role === "user" && (
@@ -1125,8 +1263,8 @@ function StudentDashboard({ user, onLogout }) {
               </div>
               <form onSubmit={sendChatMessage} className="p-4 border-t border-gray-100 bg-gray-50/50">
                 <div className="flex gap-2">
-                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none bg-white text-sm" placeholder={`Pregúntale a ${PROFESSORS.find((p) => p.id === selectedProfessor)?.name}...`} />
-                  <button type="submit" disabled={!chatInput.trim()} className="bg-indigo-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm flex items-center gap-1.5">
+                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none bg-white text-sm" placeholder={`Pregúntale a ${PROFESSORS.find((p) => p.id === selectedProfessor)?.name}...`} />
+                  <button type="submit" disabled={!chatInput.trim()} className="bg-[#0C043F] text-white px-5 py-3 rounded-xl font-medium hover:bg-[#0C043F]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm flex items-center gap-1.5">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                     Enviar
                   </button>
@@ -1137,6 +1275,29 @@ function StudentDashboard({ user, onLogout }) {
 
           {activeTab === "quiz" && (
             <div className="space-y-4">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+                  <span className="text-sm font-medium text-gray-700">Curso:</span>
+                  <div className="flex gap-1">
+                    {["3ro", "4to", "5to"].map((lvl) => (
+                      <button key={lvl} onClick={() => updateStudentLevel(lvl)} className={`px-3 py-1 rounded-lg text-xs font-medium transition ${studentLevel === lvl ? "bg-[#0C043F] text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                        {lvl}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-700">Materia:</span>
+                  <div className="flex gap-1">
+                    {["", "Hardware", "Software", "Redes", "TIMI"].map((sub) => (
+                      <button key={sub || "todas"} onClick={() => setStudentSubject(sub)} className={`px-3 py-1 rounded-lg text-xs font-medium transition ${studentSubject === sub ? "bg-emerald-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                        {sub || "Todas"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
               {availableQuizzes.length > 0 && !selectedQuizId && (
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                   <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><TabIcon id="quiz" /> Quizzes del Docente</h2>
@@ -1144,14 +1305,16 @@ function StudentDashboard({ user, onLogout }) {
                     {availableQuizzes.map((q) => {
                       const isExpired = q.deadline && new Date(q.deadline) < new Date();
                       return (
-                      <button key={q.id} onClick={() => !isExpired && startTeacherQuiz(q)} className={`w-full text-left p-4 border rounded-xl transition flex items-center gap-3 ${isExpired ? "border-red-200 bg-red-50 opacity-60 cursor-not-allowed" : "border-gray-200 hover:bg-indigo-50 hover:border-indigo-300"}`}>
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isExpired ? "bg-red-100" : "bg-indigo-100"}`}>
-                          <svg className={`w-5 h-5 ${isExpired ? "text-red-400" : "text-indigo-600"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                      <button key={q.id} onClick={() => !isExpired && startTeacherQuiz(q)} className={`w-full text-left p-4 border rounded-xl transition flex items-center gap-3 ${isExpired ? "border-red-200 bg-red-50 opacity-60 cursor-not-allowed" : "border-gray-200 hover:bg-[#e71367]/10 hover:border-[#e71367]/50"}`}>
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isExpired ? "bg-red-100" : "bg-[#0C043F]/10"}`}>
+                          <svg className={`w-5 h-5 ${isExpired ? "text-red-400" : "text-[#0C043F]"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                         </div>
                         <div className="flex-1">
                           <span className="font-medium text-gray-800">{q.topic}</span>
                           <p className="text-xs text-gray-400 mt-0.5">
                             {new Date(q.publishedAt).toLocaleString()}
+                            {q.level && <span className="ml-1 text-[#0C043F] font-medium">{q.level}</span>}
+                            {q.subject && <span className="ml-1 text-emerald-600 font-medium">{q.subject}</span>}
                             {q.deadline && (
                               <span className={`ml-2 ${isExpired ? "text-red-500" : "text-orange-500"}`}>
                                 {isExpired ? "⛔ Vencido" : "⌛ " + new Date(q.deadline).toLocaleString()}
@@ -1173,17 +1336,17 @@ function StudentDashboard({ user, onLogout }) {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema</label>
-                      <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" placeholder="Ej: Programación en Python" />
+                      <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder="Ej: Programación en Python" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido a evaluar</label>
-                      <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={6} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido que quieres practicar..." />
+                      <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={6} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido que quieres practicar..." />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-600 mb-1.5">Cantidad de preguntas</label>
-                      <input type="number" value={questionCount} onChange={(e) => setQuestionCount(Math.max(1, parseInt(e.target.value) || 5))} min={1} max={20} className="w-24 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" />
+                      <input type="number" value={questionCount} onChange={(e) => setQuestionCount(Math.max(1, parseInt(e.target.value) || 5))} min={1} max={20} className="w-24 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" />
                     </div>
-                    <button onClick={generateQuiz} disabled={loading || !content.trim() || !topic.trim()} className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{loading ? "Generando..." : "Generar Quiz"}</button>
+                    <button onClick={generateQuiz} disabled={loading || !content.trim() || !topic.trim()} className="bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white px-6 py-2.5 rounded-xl font-medium hover:from-[#0C043F]/90 hover:to-[#e71367]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{loading ? "Generando..." : "Generar Quiz"}</button>
                   </div>
                 )}
               </div>
@@ -1202,7 +1365,7 @@ function StudentDashboard({ user, onLogout }) {
                   </div>
                   <p className="text-green-700 font-semibold text-lg mb-1">¡Quiz completado!</p>
                   <p className="text-green-600 text-sm mb-6">Tu resultado ha sido enviado al docente.</p>
-                  <button onClick={() => { setQuiz(null); setQuizSubmitted(false); setTopic(""); setContent(""); setSelectedQuizId(null); }} className="bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-indigo-700 transition shadow-sm">Volver a quizzes</button>
+                  <button onClick={() => { setQuiz(null); setQuizSubmitted(false); setTopic(""); setContent(""); setSelectedQuizId(null); }} className="bg-[#0C043F] text-white px-6 py-2.5 rounded-xl font-medium hover:bg-[#0C043F]/90 transition shadow-sm">Volver a quizzes</button>
                 </div>
               )}
 
@@ -1218,13 +1381,13 @@ function StudentDashboard({ user, onLogout }) {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema</label>
-                      <input type="text" value={reelsTopic} onChange={(e) => setReelsTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" placeholder="Ej: Redes de computadoras" />
+                      <input type="text" value={reelsTopic} onChange={(e) => setReelsTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder="Ej: Redes de computadoras" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido</label>
-                      <textarea value={reelsContent} onChange={(e) => setReelsContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido educativo para generar los reels..." />
+                      <textarea value={reelsContent} onChange={(e) => setReelsContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido educativo para generar los reels..." />
                     </div>
-                    <button onClick={generateReels} disabled={reelsLoading || !reelsContent.trim() || !reelsTopic.trim()} className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{reelsLoading ? "Generando..." : "Generar Reels"}</button>
+                    <button onClick={generateReels} disabled={reelsLoading || !reelsContent.trim() || !reelsTopic.trim()} className="bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white px-6 py-2.5 rounded-xl font-medium hover:from-[#0C043F]/90 hover:to-[#e71367]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{reelsLoading ? "Generando..." : "Generar Reels"}</button>
                   </div>
                 </div>
               ) : (
@@ -1232,12 +1395,12 @@ function StudentDashboard({ user, onLogout }) {
                   {reels.error ? (
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                       <p className="text-red-500 text-sm">{reels.error}</p>
-                      <button onClick={() => setReels(null)} className="mt-3 text-indigo-600 text-sm hover:underline">Volver</button>
+                      <button onClick={() => setReels(null)} className="mt-3 text-[#0C043F] text-sm hover:underline">Volver</button>
                     </div>
                   ) : (
                     <>
                       <div className="flex items-center justify-between mb-3 px-1">
-                        <button onClick={() => { window.speechSynthesis.cancel(); setReels(null); }} className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                        <button onClick={() => { window.speechSynthesis.cancel(); setReels(null); }} className="text-sm text-[#0C043F] hover:text-[#0C043F] flex items-center gap-1">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                           Nuevos reels
                         </button>
@@ -1252,21 +1415,40 @@ function StudentDashboard({ user, onLogout }) {
                           <span className="text-xs text-gray-400">{currentReel + 1} / {reels.reels?.length || 0}</span>
                         </div>
                       </div>
+                      {currentReel > 0 && <div className="absolute top-14 left-0 right-0 z-10 flex gap-1 px-6"><div className="h-1 flex-1 rounded-full bg-white/30"><div className="h-1 rounded-full bg-white transition-all" style={{ width: `${((currentReel) / (reels.reels?.length || 1)) * 100}%` }} /></div></div>}
                       <div ref={reelsScrollRef} onScroll={() => { if (reelsScrollRef.current && reels?.reels) { const idx = Math.round(reelsScrollRef.current.scrollTop / reelsScrollRef.current.clientHeight); setCurrentReel(Math.min(idx, reels.reels.length - 1)); } }} className="snap-y snap-mandatory h-[calc(100vh-16rem)] overflow-y-scroll rounded-2xl scroll-smooth" style={{ scrollbarWidth: "none" }}>
-                        {reels.reels?.map((reel, i) => (
+                        {reels.reels?.map((reel, i) => {
+                          const gradients = [
+                            "from-violet-600 via-purple-600 to-pink-500",
+                            "from-cyan-500 via-blue-500 to-[#0C043F]",
+                            "from-emerald-500 via-teal-500 to-cyan-600",
+                            "from-orange-500 via-red-500 to-rose-600",
+                            "from-fuchsia-500 via-pink-500 to-rose-500",
+                            "from-amber-400 via-orange-500 to-red-500",
+                            "from-sky-400 via-blue-500 to-[#0C043F]",
+                            "from-lime-400 via-green-400 to-emerald-500",
+                          ];
+                          const g = gradients[i % gradients.length];
+                          return (
                           <div key={i} className="snap-start h-full flex items-center justify-center p-2 first:pt-0 last:pb-0">
-                            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl p-8 w-full max-w-md mx-auto min-h-[28rem] flex flex-col items-center justify-center text-white shadow-xl">
-                              <span className="text-6xl mb-6">{reel.emoji}</span>
-                              <h3 className="text-xl font-bold text-center mb-4 leading-tight">{reel.title}</h3>
-                              <p className="text-base text-center leading-relaxed text-white/90 mb-6 max-w-sm">{reel.content}</p>
+                            <div className={`bg-gradient-to-br ${g} rounded-2xl p-8 w-full max-w-md mx-auto min-h-[28rem] flex flex-col items-center justify-center text-white shadow-xl`}>
+                              <div className="text-6xl mb-4">{reel.emoji}</div>
+                              <h3 className="text-xl font-bold text-center mb-3 leading-tight drop-shadow-sm">{reel.title}</h3>
+                              <p className="text-base text-center leading-relaxed text-white/90 mb-5 max-w-sm">{reel.content}</p>
                               {reel.tip && (
-                                <div className="bg-white/15 backdrop-blur-sm rounded-xl p-4 w-full max-w-sm">
-                                  <p className="text-xs font-semibold uppercase tracking-wider text-white/70 mb-1">💡 Dato Clave</p>
-                                  <p className="text-sm text-white/90 leading-relaxed">{reel.tip}</p>
+                                <div className="bg-white/20 backdrop-blur-md rounded-xl p-4 w-full max-w-sm border border-white/10 shadow-inner">
+                                  <p className="text-xs font-bold uppercase tracking-wider text-white/80 mb-1 flex items-center gap-1">⚡ Dato Clave</p>
+                                  <p className="text-sm text-white/95 leading-relaxed font-medium">{reel.tip}</p>
                                 </div>
                               )}
                             </div>
                           </div>
+                          );
+                        })}
+                      </div>
+                      <div className="flex items-center justify-center gap-1.5 mt-3">
+                        {reels.reels?.map((_, i) => (
+                          <button key={i} onClick={() => { if (reelsScrollRef.current) { reelsScrollRef.current.scrollTo({ top: i * reelsScrollRef.current.clientHeight, behavior: "smooth" }); } }} className={`w-2 h-2 rounded-full transition-all ${i === currentReel ? "bg-[#0C043F] w-5" : "bg-gray-300 hover:bg-gray-400"}`} />
                         ))}
                       </div>
                     </>
@@ -1283,20 +1465,20 @@ function StudentDashboard({ user, onLogout }) {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema</label>
-                    <input type="text" value={gameTopic} onChange={(e) => setGameTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" placeholder="Ej: Programación en Python" />
+                    <input type="text" value={gameTopic} onChange={(e) => setGameTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder="Ej: Programación en Python" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido</label>
-                    <textarea value={gameContent} onChange={(e) => setGameContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido educativo para generar el juego..." />
+                    <textarea value={gameContent} onChange={(e) => setGameContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido educativo para generar el juego..." />
                   </div>
                   <div className="flex gap-2">
-                    {["memory", "hangman", "speed"].map((t) => (
-                      <button key={t} onClick={() => setGameType(t)} className={`px-4 py-2 rounded-xl text-sm font-medium transition ${gameType === t ? "bg-indigo-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
-                        {t === "memory" ? "🧠 Memoria" : t === "hangman" ? "💀 Ahorcado" : "⚡ Speed Quiz"}
+                    {["memory", "hangman", "wordsearch"].map((t) => (
+                      <button key={t} onClick={() => setGameType(t)} className={`px-4 py-2 rounded-xl text-sm font-medium transition ${gameType === t ? "bg-[#0C043F] text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                        {t === "memory" ? "🧠 Memoria" : t === "hangman" ? "💀 Ahorcado" : "🔍 Sopa de Letras"}
                       </button>
                     ))}
                   </div>
-                  <button onClick={generateGame} disabled={gameLoading || !gameContent.trim() || !gameTopic.trim()} className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{gameLoading ? "Generando..." : "Generar Juego"}</button>
+                  <button onClick={generateGame} disabled={gameLoading || !gameContent.trim() || !gameTopic.trim()} className="bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white px-6 py-2.5 rounded-xl font-medium hover:from-[#0C043F]/90 hover:to-[#e71367]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{gameLoading ? "Generando..." : "Generar Juego"}</button>
                 </div>
               </div>
 
@@ -1304,10 +1486,10 @@ function StudentDashboard({ user, onLogout }) {
 
               {gameData?.data && !gameData.error && (
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">{gameType === "memory" ? "🧠 Juego de Memoria" : gameType === "hangman" ? "💀 Ahorcado" : "⚡ Speed Quiz"}</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">{gameType === "memory" ? "🧠 Juego de Memoria" : gameType === "hangman" ? "💀 Ahorcado" : "🔍 Sopa de Letras"}</h3>
                   {gameType === "memory" && <MemoryGame pairs={gameData.data} />}
                   {gameType === "hangman" && <HangmanGame words={gameData.data} />}
-                  {gameType === "speed" && <SpeedQuizGame questions={gameData.data} />}
+                  {gameType === "wordsearch" && <WordSearchGame words={gameData.data} />}
                 </div>
               )}
             </div>
@@ -1317,14 +1499,14 @@ function StudentDashboard({ user, onLogout }) {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               {selectedResult ? (
                 <div>
-                  <button onClick={() => setSelectedResult(null)} className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1 mb-4">
+                  <button onClick={() => setSelectedResult(null)} className="text-sm text-[#0C043F] hover:text-[#0C043F] flex items-center gap-1 mb-4">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                     Volver a mis resultados
                   </button>
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Quiz: {selectedResult.topic}</h3>
-                  <div className="mb-4 p-3 bg-indigo-50 rounded-xl text-sm">
-                    <span className="font-semibold text-indigo-700">{selectedResult.score}/{selectedResult.total} correctas</span>
-                    <span className="text-indigo-500 ml-2">({Math.round((selectedResult.score / selectedResult.total) * 100)}%)</span>
+                  <div className="mb-4 p-3 bg-[#e71367]/10 rounded-xl text-sm">
+                    <span className="font-semibold text-[#0C043F]">{selectedResult.score}/{selectedResult.total} correctas</span>
+                    <span className="text-[#e71367] ml-2">({Math.round((selectedResult.score / selectedResult.total) * 100)}%)</span>
                   </div>
                   <QuizView questions={selectedResult.questions} initialAnswers={selectedResult.userAnswers} initialSubmitted={true} />
                 </div>
@@ -1339,8 +1521,8 @@ function StudentDashboard({ user, onLogout }) {
                         <div key={r.id} className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition cursor-pointer" onClick={() => { if (r.questions && r.userAnswers) setSelectedResult(r); }}>
                           <div className="flex justify-between items-start mb-2">
                             <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                                <svg className="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                              <div className="w-8 h-8 bg-[#0C043F]/10 rounded-full flex items-center justify-center">
+                                <svg className="w-4 h-4 text-[#0C043F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                               </div>
                               <span className="font-semibold text-gray-800">{r.topic}</span>
                             </div>

@@ -9,7 +9,8 @@
     "readBy": [
       "alumno",
       "melina_biegun",
-      "agustina_romano"
+      "agustina_romano",
+      "meli_biegun"
     ]
   },
   {
@@ -22,7 +23,8 @@
     "readBy": [
       "alumno",
       "melina_biegun",
-      "agustina_romano"
+      "agustina_romano",
+      "meli_biegun"
     ]
   },
   {
@@ -81,5 +83,50 @@
     "topic": "conceptos basicós de python",
     "studentName": "agustina_romano",
     "deadline": "2026-06-25T09:17"
+  },
+  {
+    "id": 1782393521827,
+    "createdAt": "2026-06-25T13:18:41.827Z",
+    "readBy": [],
+    "type": "quiz_missed",
+    "forUser": "docente",
+    "quizId": 1782389612227,
+    "topic": "Introducción a Pyhton",
+    "studentName": "meli_biegun",
+    "deadline": "2026-06-25T09:20"
+  },
+  {
+    "id": 1782393521833,
+    "createdAt": "2026-06-25T13:18:41.833Z",
+    "readBy": [],
+    "type": "quiz_missed",
+    "forUser": "docente",
+    "quizId": 1782389800417,
+    "topic": "conceptos basicós de python",
+    "studentName": "meli_biegun",
+    "deadline": "2026-06-25T09:17"
+  },
+  {
+    "id": 1782394190302,
+    "createdAt": "2026-06-25T13:29:50.302Z",
+    "readBy": [
+      "meli_biegun"
+    ],
+    "quizId": 1782394190037,
+    "topic": "qué es el módelo osi",
+    "deadline": "2026-06-25T11:30",
+    "publishedAt": "2026-06-25T13:29:50.037Z"
+  },
+  {
+    "id": 1782394390098,
+    "createdAt": "2026-06-25T13:33:10.098Z",
+    "readBy": [],
+    "type": "quiz_completed",
+    "forUser": "docente",
+    "quizId": 1782394390087,
+    "topic": "qué es el módelo osi",
+    "studentName": "meli_biegun",
+    "score": 2,
+    "total": 5
   }
 ]

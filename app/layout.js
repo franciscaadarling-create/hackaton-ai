@@ -1,8 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "EduQuiz AI - Plataforma Educativa con IA",
+  title: "TicQuiz IA - Plataforma Educativa con IA",
   description: "Plataforma de aprendizaje con Groq AI",
+  icons: [{ rel: "icon", url: "/logo/images.png" }],
 };
 
 export default function RootLayout({ children }) {
