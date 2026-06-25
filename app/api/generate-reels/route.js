@@ -14,13 +14,15 @@ Formato: {"reels": [{"emoji": "emoji representativo", "title": "título corto y 
 Cada reel debe ser autónomo, visualmente atractivo y cubrir un concepto distinto.
 Ejemplo: {"reels":[{"emoji":"🧠","title":"¿Qué es una variable?","content":"Una variable es como una caja donde guardamos información en la memoria de la computadora. Puede almacenar números, texto u otros datos.","tip":"Las variables se llaman así porque su valor puede variar durante el programa."}]}`;
 
+    const truncatedContent = content.length > 8000 ? content.substring(0, 8000) + "\n\n[contenido truncado]" : content;
     const response = await getGroq().chat.completions.create({
       messages: [
         { role: "system", content: prompt },
-        { role: "user", content: `Tema: ${topic}\n\nContenido:\n${content}` },
+        { role: "user", content: `Tema: ${topic}\n\nContenido:\n${truncatedContent}` },
       ],
       model: "llama-3.1-8b-instant",
       temperature: 0.7,
+      max_tokens: 2048,
     });
 
     const raw = response.choices[0].message.content;

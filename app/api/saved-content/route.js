@@ -17,18 +17,23 @@ async function writeContent(items) {
   await fs.writeFile(DATA_FILE, JSON.stringify(items, null, 2), "utf-8");
 }
 
-export async function GET() {
-  const items = await readContent();
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const subject = searchParams.get("subject");
+  const userName = searchParams.get("userName");
+  let items = await readContent();
+  if (userName) items = items.filter((i) => i.owner === userName);
+  if (subject) items = items.filter((i) => i.subject === subject);
   return new Response(JSON.stringify(items));
 }
 
 export async function POST(req) {
-  const { topic, content } = await req.json();
+  const { topic, content, subject, userName } = await req.json();
   if (!topic || !content) {
     return new Response(JSON.stringify({ error: "Faltan topic y content" }), { status: 400 });
   }
   const items = await readContent();
-  const item = { id: Date.now(), topic, content, date: new Date().toLocaleString() };
+  const item = { id: Date.now(), owner: userName || null, topic, content, subject: subject || null, date: new Date().toLocaleString() };
   items.push(item);
   await writeContent(items);
   return new Response(JSON.stringify(item));

@@ -26,13 +26,15 @@ export async function POST(req) {
     const { content, topic, type = "memory" } = await req.json();
     const prompt = GAME_PROMPTS[type] || GAME_PROMPTS.memory;
 
+    const truncatedContent = content.length > 8000 ? content.substring(0, 8000) + "\n\n[contenido truncado]" : content;
     const response = await getGroq().chat.completions.create({
       messages: [
         { role: "system", content: prompt },
-        { role: "user", content: `Tema: ${topic}\n\nContenido:\n${content}` },
+        { role: "user", content: `Tema: ${topic}\n\nContenido:\n${truncatedContent}` },
       ],
       model: "llama-3.1-8b-instant",
       temperature: 0.7,
+      max_tokens: 2048,
     });
 
     const raw = response.choices[0].message.content;

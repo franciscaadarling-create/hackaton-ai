@@ -15,7 +15,7 @@ function MarkdownMessage({ content, isUser }) {
         code: ({ node, inline, className, children, ...props }) => {
           const match = /language-(\w+)/.exec(className || "");
           if (inline) {
-            return <code className={`text-xs rounded px-1 py-0.5 ${isUser ? "bg-white/20" : "bg-black/10"}`}>{children}</code>;
+            return <code className={`text-xs rounded px-1 py-0.5 ${isUser ? "bg-white/30 text-white" : "bg-gray-200 text-gray-800"}`}>{children}</code>;
           }
           if (match) {
             return (
@@ -28,7 +28,7 @@ function MarkdownMessage({ content, isUser }) {
             );
           }
           return (
-            <pre className={`text-xs rounded-lg p-3 my-2 overflow-x-auto ${isUser ? "bg-white/20" : "bg-gray-900"}`}>
+            <pre className={`text-xs rounded-lg p-3 my-2 overflow-x-auto ${isUser ? "bg-gray-900" : "bg-gray-900"} text-gray-100`}>
               <code>{children}</code>
             </pre>
           );
@@ -73,6 +73,8 @@ function TabIcon({ id }) {
     results: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>,
     juegos: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
     reels: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>,
+    apoyo: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
+    home: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
   };
   return icons[id] || null;
 }
@@ -267,6 +269,7 @@ function TeacherDashboard({ user, onLogout }) {
   const [activeTab, setActiveTab] = useState("content");
   const [fileName, setFileName] = useState("");
   const [results, setResults] = useState([]);
+  const [selectedResultDetail, setSelectedResultDetail] = useState(null);
   const [savedContentList, setSavedContentList] = useState([]);
   const [selectedContentIds, setSelectedContentIds] = useState([]);
   const [uploading, setUploading] = useState(false);
@@ -278,11 +281,14 @@ function TeacherDashboard({ user, onLogout }) {
   const [quizSubject, setQuizSubject] = useState("Hardware");
   const [contextText, setContextText] = useState("");
   const [contextUrl, setContextUrl] = useState("");
+  const [contextProfessor, setContextProfessor] = useState(PROFESSORS[0].id);
   const [fetchingUrl, setFetchingUrl] = useState(false);
   const [teacherNotifs, setTeacherNotifs] = useState(0);
   const [teacherNotifList, setTeacherNotifList] = useState([]);
   const [showNotifs, setShowNotifs] = useState(false);
   const [allStudents, setAllStudents] = useState([]);
+  const [supportRequests, setSupportRequests] = useState([]);
+  const [contentSubject, setContentSubject] = useState("Hardware");
   const fileInputRef = useRef(null);
   const chatBottomRef = useRef(null);
 
@@ -293,8 +299,8 @@ function TeacherDashboard({ user, onLogout }) {
   }, [user.name]);
 
   const loadSavedContent = useCallback(async () => {
-    try { const res = await fetch("/api/saved-content"); const data = await res.json(); setSavedContentList(data); } catch {}
-  }, []);
+    try { const res = await fetch(`/api/saved-content?userName=${encodeURIComponent(user.name)}`); const data = await res.json(); setSavedContentList(data); } catch {}
+  }, [user.name]);
 
   const checkMissed = useCallback(async () => {
     try { await fetch("/api/check-missed"); loadTeacherNotifs(); } catch {}
@@ -312,18 +318,26 @@ function TeacherDashboard({ user, onLogout }) {
     try { const res = await fetch("/api/auth?role=student"); const data = await res.json(); setAllStudents(data); } catch {}
   }, []);
 
+  const loadSupportRequests = useCallback(async () => {
+    try { const res = await fetch(`/api/support-requests?teacherName=${encodeURIComponent(user.name)}`); const data = await res.json(); setSupportRequests(data); } catch {}
+  }, [user.name]);
+
+  const deleteSupportRequest = async (id) => {
+    try { await fetch(`/api/support-requests?id=${id}`, { method: "DELETE" }); loadSupportRequests(); } catch {}
+  };
+
   const loadQuizzes = useCallback(async () => {
     try { const res = await fetch(`/api/quizzes?teacherName=${encodeURIComponent(user.name)}`); const data = await res.json(); setPublishedQuizzes(data); } catch {}
   }, [user.name]);
 
   const loadContext = useCallback(async () => {
-    try { const res = await fetch("/api/context"); const data = await res.json(); setContextText(data.text || ""); } catch {}
-  }, []);
+    try { const res = await fetch(`/api/context?professorId=${contextProfessor}`); const data = await res.json(); setContextText(data.text || ""); } catch {}
+  }, [contextProfessor]);
 
-  useEffect(() => { loadTeacherNotifs(); if (activeTab === "results") { loadResults(); checkMissed(); loadStudents(); } if (activeTab === "quiz") loadQuizzes(); if (activeTab === "context") loadContext(); if (activeTab === "content") loadSavedContent(); }, [activeTab, loadResults, loadQuizzes, loadContext, loadTeacherNotifs, checkMissed, loadSavedContent, loadStudents]);
+  useEffect(() => { loadTeacherNotifs(); if (activeTab === "results") { loadResults(); checkMissed(); loadStudents(); loadSupportRequests(); } if (activeTab === "quiz") loadQuizzes(); if (activeTab === "context") loadContext(); if (activeTab === "content") loadSavedContent(); }, [activeTab, loadResults, loadQuizzes, loadContext, loadTeacherNotifs, checkMissed, loadSavedContent, loadStudents, loadSupportRequests]);
 
   const saveContext = async () => {
-    try { await fetch("/api/context", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: contextText }) }); alert("Contexto guardado. Los chatbots ahora usarán este material."); } catch { alert("Error al guardar el contexto"); }
+    try { await fetch("/api/context", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: contextText, professorId: contextProfessor }) }); alert("Contexto guardado para " + PROFESSORS.find(p => p.id === contextProfessor)?.name + ". El chatbot ahora usará este material."); } catch { alert("Error al guardar el contexto"); }
   };
 
   const addContentToContext = (item) => {
@@ -366,7 +380,7 @@ function TeacherDashboard({ user, onLogout }) {
   const saveContent = async () => {
     if (!topic.trim() || !content.trim()) return;
     try {
-      const res = await fetch("/api/saved-content", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic, content }) });
+      const res = await fetch("/api/saved-content", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic, content, subject: contentSubject, userName: user.name }) });
       const saved = await res.json();
       if (saved.error) { alert("Error: " + saved.error); return; }
       setSavedContentList((prev) => [...prev, saved]);
@@ -433,6 +447,7 @@ function TeacherDashboard({ user, onLogout }) {
   };
 
   const tabs = [
+    { id: "home", label: "Inicio" },
     { id: "content", label: "Subir Contenido" },
     { id: "context", label: "Contexto" },
     { id: "quiz", label: "Generar Quiz" },
@@ -447,6 +462,47 @@ function TeacherDashboard({ user, onLogout }) {
         <DashboardHeader title="Panel Docente" userName={user.name} onLogout={onLogout} notifCount={teacherNotifs} onNotifClick={() => { markTeacherNotifRead(); setActiveTab("results"); }} />
         <main className="flex-1 p-4 md:p-6 max-w-5xl w-full mx-auto">
           <MobileNav tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+
+          {activeTab === "home" && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#0C043F] to-[#e71367] rounded-2xl flex items-center justify-center shadow-lg">
+                  <span className="text-2xl font-bold text-white">{user.name.charAt(0).toUpperCase()}</span>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-800">¡Hola, {user.name}!</h1>
+                  <p className="text-gray-500">Panel Docente — TicQuiz IA</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-5 border border-purple-200">
+                  <div className="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center mb-3">
+                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-1">Carga Contenido</h3>
+                  <p className="text-sm text-gray-600">Subí archivos o texto con material educativo para tus clases.</p>
+                </div>
+                <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-5 border border-pink-200">
+                  <div className="w-10 h-10 bg-[#e71367] rounded-xl flex items-center justify-center mb-3">
+                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-1">Generá Quizzes</h3>
+                  <p className="text-sm text-gray-600">Crea cuestionarios con IA a partir de tu contenido educativo.</p>
+                </div>
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-200">
+                  <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center mb-3">
+                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-1">Chatbots Educativos</h3>
+                  <p className="text-sm text-gray-600">4 profesores IA especializados en distintas materias.</p>
+                </div>
+              </div>
+              <div className="bg-gradient-to-r from-[#0C043F] to-[#e71367] rounded-xl p-6 text-white">
+                <h2 className="text-lg font-bold mb-2">TicQuiz IA — Educación Inteligente</h2>
+                <p className="text-white/80 text-sm leading-relaxed">Plataforma educativa potenciada por IA que permite a docentes crear contenido, generar quizzes interactivos y realizar seguimiento de resultados, mientras los alumnos aprenden con chatbots especializados, juegos educativos y material personalizado.</p>
+              </div>
+            </div>
+          )}
 
           {activeTab === "content" && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -472,14 +528,31 @@ function TeacherDashboard({ user, onLogout }) {
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido</label>
                   <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={8} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y" placeholder="Escribe, pega o sube un archivo (.txt, .pdf, imagen) con el contenido educativo..." />
                 </div>
+                <div className="flex items-center gap-3">
+                  <label className="text-sm font-medium text-gray-600">Materia:</label>
+                  <select value={contentSubject} onChange={(e) => setContentSubject(e.target.value)} className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm">
+                    <option value="Hardware">Hardware</option>
+                    <option value="Software">Software</option>
+                    <option value="Redes">Redes</option>
+                    <option value="TIMI">TIMI</option>
+                  </select>
+                </div>
                 <button onClick={saveContent} className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-green-600 hover:to-emerald-700 transition shadow-sm">Guardar Contenido</button>
                 {savedContentList.length > 0 && (
                   <div className="mt-4 p-4 bg-gray-50 rounded-xl">
                     <p className="text-sm font-medium text-gray-600 mb-2">Contenidos guardados:</p>
                     {savedContentList.map((item) => (
                       <div key={item.id} className="flex justify-between items-center py-1.5 text-sm border-b border-gray-100 last:border-0">
-                        <span className="text-gray-700">{item.topic}</span>
-                        <span className="text-gray-400 text-xs">{item.date}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-700">{item.topic}</span>
+                          {item.subject && <span className="text-[10px] bg-[#0C043F]/10 text-[#0C043F] px-2 py-0.5 rounded-full font-medium">{item.subject}</span>}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-400 text-xs">{item.date}</span>
+                          <button onClick={async () => { try { await fetch("/api/saved-content", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: item.id }) }); const res = await fetch(`/api/saved-content?userName=${encodeURIComponent(user.name)}`); const data = await res.json(); setSavedContentList(data); } catch {} }} className="text-red-400 hover:text-red-600 transition p-1" title="Eliminar">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -528,10 +601,10 @@ function TeacherDashboard({ user, onLogout }) {
             <div className="space-y-4">
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2"><TabIcon id="quiz" /> Generar Quiz con IA</h2>
-                {savedContentList.length > 0 && (
+                {savedContentList.filter(item => !item.subject || item.subject === quizSubject).length > 0 && (
                   <div className="mb-4 p-4 bg-gray-50 rounded-xl">
-                    <p className="text-sm font-medium text-gray-600 mb-2">Seleccionar contenido guardado:</p>
-                    {savedContentList.map((item) => (
+                    <p className="text-sm font-medium text-gray-600 mb-2">Contenido guardado para <span className="text-[#e71367]">{quizSubject}</span>:</p>
+                    {savedContentList.filter(item => !item.subject || item.subject === quizSubject).map((item) => (
                       <label key={item.id} className="flex items-center gap-2 py-1.5 text-sm cursor-pointer hover:text-[#0C043F]">
                         <input type="checkbox" checked={selectedContentIds.includes(item.id)} onChange={() => setSelectedContentIds((prev) => prev.includes(item.id) ? prev.filter((id) => id !== item.id) : [...prev, item.id])} className="rounded" />
                         <span>{item.topic}</span>
@@ -606,7 +679,12 @@ function TeacherDashboard({ user, onLogout }) {
                             </span>
                           )}
                         </div>
-                        <span className="text-gray-400 text-xs">{new Date(q.publishedAt).toLocaleString()}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-400 text-xs">{new Date(q.publishedAt).toLocaleString()}</span>
+                          <button onClick={async () => { if (confirm("¿Eliminar este quiz?")) { await fetch(`/api/quizzes?id=${q.id}`, { method: "DELETE" }); loadQuizzes(); } }} className="text-red-400 hover:text-red-600 transition p-1" title="Eliminar quiz">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -695,6 +773,12 @@ function TeacherDashboard({ user, onLogout }) {
                             <span><strong>{n.studentName}</strong> NO entregó "{n.topic}" <span className="text-red-500">(vencido)</span></span>
                           </div>
                         )}
+                        {n.type === "support_request" && (
+                          <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-purple-500 shrink-0" />
+                            <span><strong>{n.studentName}</strong> solicita clase de apoyo — <span className="text-[#0C043F]">{n.subject}</span>: "{n.topic}"</span>
+                          </div>
+                        )}
                         {!n.type && (
                           <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
@@ -709,12 +793,56 @@ function TeacherDashboard({ user, onLogout }) {
               )}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2"><TabIcon id="results" /> Resultados de Quizzes</h2>
-              {results.length === 0 ? (
+              {selectedResultDetail ? (
+                <div>
+                  <button onClick={() => setSelectedResultDetail(null)} className="text-sm text-[#0C043F] hover:text-[#0C043F] flex items-center gap-1 mb-4">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                    Volver a resultados
+                  </button>
+                  <div className="mb-4 p-3 bg-gray-50 rounded-xl text-sm">
+                    <span className="font-semibold text-gray-800">{selectedResultDetail.studentName}</span>
+                    <span className="text-gray-400 mx-2">|</span>
+                    <span className="text-[#0C043F] font-medium">{selectedResultDetail.topic}</span>
+                    <div className="mt-1 flex items-center gap-3">
+                      <span className="text-green-600 font-semibold">{selectedResultDetail.score}/{selectedResultDetail.total} correctas</span>
+                      <span className="text-gray-500">({Math.round((selectedResultDetail.score / selectedResultDetail.total) * 100)}%)</span>
+                      {Math.round((selectedResultDetail.score / selectedResultDetail.total) * 100) < 60 ? (
+                        <span className="text-red-600 font-semibold text-xs bg-red-100 px-2 py-0.5 rounded-full">Reprobó</span>
+                      ) : (
+                        <span className="text-green-600 font-semibold text-xs bg-green-100 px-2 py-0.5 rounded-full">Aprobó</span>
+                      )}
+                      {Math.round((selectedResultDetail.score / selectedResultDetail.total) * 100) < 60 && (
+                        <button onClick={async () => {
+                          if (!confirm("¿Asignar recuperatorio a " + selectedResultDetail.studentName + "?")) return;
+                          try {
+                            const qRes = await fetch("/api/quizzes?teacherName=" + encodeURIComponent(user.name));
+                            const quizzes = await qRes.json();
+                            const orig = quizzes.find(q => q.topic === selectedResultDetail.topic);
+                            const genRes = await fetch("/api/quiz", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: selectedResultDetail.topic, topic: "Recuperatorio de " + selectedResultDetail.topic, count: 5 }) });
+                            const genData = await genRes.json();
+                            if (!Array.isArray(genData)) { alert("Error al generar el recuperatorio"); return; }
+                            const newTopic = "Recuperatorio: " + selectedResultDetail.topic;
+                            const dl = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+                            const pubRes = await fetch("/api/quizzes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic: newTopic, questions: genData, deadline: dl, level: orig?.level || "3ro", subject: orig?.subject || "Hardware", teacherName: user.name, forStudent: selectedResultDetail.studentName }) });
+                            const published = await pubRes.json();
+                            await fetch("/api/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "recuperatorio", forUser: selectedResultDetail.studentName, topic: newTopic, quizId: published.id, deadline: dl, teacherName: user.name }) });
+                            loadQuizzes();
+                            alert("Recuperatorio asignado a " + selectedResultDetail.studentName + ". Quiz '" + newTopic + "' publicado con fecha límite " + dl + ".");
+                          } catch { alert("Error al asignar recuperatorio"); }
+                        }} className="text-xs bg-orange-500 text-white px-3 py-1 rounded-full hover:bg-orange-600 transition font-medium">
+                          Asignar Recuperatorio
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <QuizView questions={selectedResultDetail.questions} initialAnswers={selectedResultDetail.userAnswers} initialSubmitted={true} />
+                </div>
+              ) : results.length === 0 ? (
                 <p className="text-gray-400 text-center py-8">No hay resultados aún. Los alumnos deben completar quizzes para ver sus resultados aquí.</p>
               ) : (
                 <div className="space-y-3">
                   {results.toReversed().map((r) => (
-                    <div key={r.id} className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition">
+                    <div key={r.id} className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition cursor-pointer" onClick={() => { if (r.questions && r.userAnswers) setSelectedResultDetail(r); }}>
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 bg-[#0C043F]/10 rounded-full flex items-center justify-center">
@@ -731,6 +859,11 @@ function TeacherDashboard({ user, onLogout }) {
                       <div className="flex gap-4 text-sm ml-10">
                         <span className="text-green-600 font-semibold">{r.score}/{r.total} correctas</span>
                         <span className="text-gray-500">({Math.round((r.score / r.total) * 100)}%)</span>
+                        {Math.round((r.score / r.total) * 100) < 60 ? (
+                          <span className="text-red-600 font-semibold text-xs bg-red-100 px-2 py-0.5 rounded-full">Reprobó</span>
+                        ) : (
+                          <span className="text-green-600 font-semibold text-xs bg-green-100 px-2 py-0.5 rounded-full">Aprobó</span>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -782,6 +915,33 @@ function TeacherDashboard({ user, onLogout }) {
                       </div>
                     );
                   })}
+                </div>
+              </div>
+            )}
+
+            {supportRequests.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2">
+                  <TabIcon id="apoyo" /> Solicitudes de Clase de Apoyo
+                </h2>
+                <div className="space-y-3">
+                  {supportRequests.toReversed().map((r) => (
+                    <div key={r.id} className="border border-gray-100 rounded-xl p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <span className="font-semibold text-gray-800">{r.studentName}</span>
+                          <span className="text-gray-400 mx-2">|</span>
+                          <span className="text-[#0C043F] font-medium text-sm">{r.subject}</span>
+                        </div>
+                        <span className="text-xs text-gray-400">{new Date(r.createdAt).toLocaleString()}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 ml-1 mb-2">{r.topic}</p>
+                      <button onClick={() => deleteSupportRequest(r.id)}
+                        className="text-xs text-red-500 hover:text-red-700 hover:underline">
+                        Marcar como atendida
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -1171,6 +1331,19 @@ function StudentDashboard({ user, onLogout }) {
   const [reelsMuted, setReelsMuted] = useState(false);
   const [studentLevel, setStudentLevel] = useState(user.level || "3ro");
   const [studentSubject, setStudentSubject] = useState("");
+  const [apoyoProfessor, setApoyoProfessor] = useState(PROFESSORS[0].id);
+  const [apoyoTopic, setApoyoTopic] = useState("");
+  const [apoyoSending, setApoyoSending] = useState(false);
+  const [apoyoSent, setApoyoSent] = useState(false);
+  const [apoyoTeachers, setApoyoTeachers] = useState([]);
+  const [apoyoSelectedTeacher, setApoyoSelectedTeacher] = useState("");
+  const [apoyoSubject, setApoyoSubject] = useState("");
+  const [studentFileName, setStudentFileName] = useState("");
+  const [studentFileContent, setStudentFileContent] = useState("");
+  const [studentUploading, setStudentUploading] = useState(false);
+  const [studentSavedContent, setStudentSavedContent] = useState([]);
+  const [studentContentSubject, setStudentContentSubject] = useState("");
+  const studentFileInputRef = useRef(null);
   const chatBottomRef = useRef(null);
   const reelsScrollRef = useRef(null);
 
@@ -1187,8 +1360,9 @@ function StudentDashboard({ user, onLogout }) {
 
   useEffect(() => { chatBottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chatMessagesByProf[selectedProfessor]]);
 
-  const loadAvailableQuizzes = useCallback(async () => { try { const params = new URLSearchParams({ level: studentLevel }); if (studentSubject) params.set("subject", studentSubject); const res = await fetch(`/api/quizzes?${params}`); const data = await res.json(); setAvailableQuizzes(data); } catch {} }, [studentLevel, studentSubject]);
+  const loadAvailableQuizzes = useCallback(async () => { try { const params = new URLSearchParams({ level: studentLevel, studentName: user.name }); if (studentSubject) params.set("subject", studentSubject); const res = await fetch(`/api/quizzes?${params}`); const data = await res.json(); setAvailableQuizzes(data); } catch {} }, [studentLevel, studentSubject, user.name]);
   useEffect(() => { if (activeTab === "quiz") loadAvailableQuizzes(); }, [activeTab, loadAvailableQuizzes]);
+  useEffect(() => { if (activeTab === "apoyo") { (async () => { try { const res = await fetch("/api/auth?role=teacher"); const data = await res.json(); setApoyoTeachers(data); if (data.length > 0 && !apoyoSelectedTeacher) setApoyoSelectedTeacher(data[0].username); } catch {} })(); } }, [activeTab, apoyoSelectedTeacher]);
 
   const updateStudentLevel = async (newLevel) => {
     setStudentLevel(newLevel);
@@ -1217,10 +1391,10 @@ function StudentDashboard({ user, onLogout }) {
   }, [user.name]);
 
   const markNotifRead = useCallback(async () => {
-    try { const res = await fetch(`/api/notifications?userName=${user.name}`); const data = await res.json(); for (const n of data) { await fetch("/api/notifications", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ notifId: n.id, userName: user.name }) }); } setUnreadNotifs(0); } catch {}
+    try { const res = await fetch(`/api/notifications?userName=${user.name}`); const data = await res.json(); for (const n of data) { await fetch("/api/notifications", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ notifId: n.id, userName: user.name }) }); } setUnreadNotifs(0); const recup = data.find(n => n.type === "recuperatorio"); if (recup) alert("Tienes un recuperatorio pendiente: '" + recup.topic + "'. Revisa la sección Quizzes."); } catch {}
   }, [user.name]);
 
-  useEffect(() => { if (activeTab === "results") loadStudentResults(); if (activeTab === "chat") checkContext(); loadNotifs(); }, [activeTab, loadStudentResults, checkContext, loadNotifs]);
+  useEffect(() => { if (activeTab === "results") loadStudentResults(); if (activeTab === "chat") checkContext(); loadNotifs(); if (activeTab === "content") { (async () => { try { const res = await fetch(`/api/saved-content?userName=${encodeURIComponent(user.name)}`); const data = await res.json(); setStudentSavedContent(data); } catch {} })(); } }, [activeTab, loadStudentResults, checkContext, loadNotifs, user.name]);
 
   const generateReels = async () => {
     if (!reelsContent.trim() || !reelsTopic.trim()) return;
@@ -1267,10 +1441,13 @@ function StudentDashboard({ user, onLogout }) {
   };
 
   const tabs = [
+    { id: "home", label: "Inicio" },
+    { id: "content", label: "Subir Contenido" },
     { id: "chat", label: "Chatbots" },
     { id: "quiz", label: "Quizzes" },
     { id: "reels", label: "Reels" },
     { id: "juegos", label: "Juegos" },
+    { id: "apoyo", label: "Pedir Apoyo" },
     { id: "results", label: "Mis Resultados" },
   ];
 
@@ -1281,6 +1458,116 @@ function StudentDashboard({ user, onLogout }) {
         <DashboardHeader title="Panel de Alumno" userName={user.name} onLogout={onLogout} notifCount={unreadNotifs} onNotifClick={() => { markNotifRead(); setActiveTab("quiz"); }} />
         <main className="flex-1 p-4 md:p-6 max-w-5xl w-full mx-auto">
           <MobileNav tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+
+          {activeTab === "home" && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#0C043F] to-[#e71367] rounded-2xl flex items-center justify-center shadow-lg">
+                  <span className="text-2xl font-bold text-white">{user.name.charAt(0).toUpperCase()}</span>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-800">¡Hola, {user.name}!</h1>
+                  <p className="text-gray-500">Panel de Alumno — TicQuiz IA</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-5 border border-pink-200">
+                  <div className="w-10 h-10 bg-[#e71367] rounded-xl flex items-center justify-center mb-3">
+                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-1">Quizzes</h3>
+                  <p className="text-sm text-gray-600">Respondé quizzes publicados por tus docentes o practicá con quizzes generados por IA.</p>
+                </div>
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-200">
+                  <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center mb-3">
+                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-1">Chatbots</h3>
+                  <p className="text-sm text-gray-600">Consultá con 4 profesores IA especializados en distintas materias.</p>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-5 border border-green-200">
+                  <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center mb-3">
+                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-1">Juegos y Reels</h3>
+                  <p className="text-sm text-gray-600">Aprendé jugando con memoria, ahorcado, sopa de letras y reels educativos.</p>
+                </div>
+              </div>
+              <div className="bg-gradient-to-r from-[#0C043F] to-[#e71367] rounded-xl p-6 text-white">
+                <h2 className="text-lg font-bold mb-2">TicQuiz IA — Educación Inteligente</h2>
+                <p className="text-white/80 text-sm leading-relaxed">Plataforma educativa potenciada por IA donde podés aprender con chatbots especializados, resolver quizzes, jugar juegos educativos, ver reels interactivos y solicitar clases de apoyo a tus docentes.</p>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "content" && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <h2 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2"><TabIcon id="content" /> Subir Contenido</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1.5">Archivo</label>
+                  <input type="file" ref={studentFileInputRef} onChange={async (e) => {
+                    const file = e.target.files?.[0]; if (!file) return;
+                    setStudentFileName(file.name); setStudentUploading(true);
+                    try {
+                      const reader = new FileReader();
+                      const base64 = await new Promise((resolve, reject) => { reader.onload = () => { try { const result = reader.result; if (typeof result === "string") { const b64 = result.split(",")[1]; resolve(b64); } else reject(new Error("Error al leer el archivo")); } catch (err) { reject(err); } }; reader.onerror = reject; reader.readAsDataURL(file); });
+                      if (file.size > 15 * 1024 * 1024) { alert("Archivo muy grande (máx 15MB)"); return; }
+                      const res = await fetch("/api/extract-text", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: file.name, data: base64 }) });
+                      const data = await res.json();
+                      if (data.error) { alert(data.error); return; }
+                      setStudentFileContent(data.text);
+                    } catch { alert("Error al procesar el archivo"); }
+                    setStudentUploading(false);
+                    if (e.target) e.target.value = "";
+                  }} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-[#0C043F] file:text-white hover:file:bg-[#0C043F]/90 file:cursor-pointer cursor-pointer border border-gray-200 rounded-xl p-2" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1.5">O escribe o pega contenido</label>
+                  <textarea value={studentFileContent} onChange={(e) => setStudentFileContent(e.target.value)} rows={6}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y"
+                    placeholder="Pega aquí el contenido educativo..." />
+                </div>
+                <div className="flex items-center gap-3">
+                  <label className="text-sm font-medium text-gray-600">Materia (opcional):</label>
+                  <select value={studentContentSubject} onChange={(e) => setStudentContentSubject(e.target.value)} className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm">
+                    <option value="">Sin materia</option>
+                    <option value="Hardware">Hardware</option>
+                    <option value="Software">Software</option>
+                    <option value="Redes">Redes</option>
+                    <option value="TIMI">TIMI</option>
+                  </select>
+                </div>
+                <button onClick={async () => {
+                  if (!studentFileContent.trim()) return;
+                  const topic = prompt("Nombre del tema:", studentFileName.replace(/\.[^/.]+$/, "") || "Sin título");
+                  if (!topic) return;
+                  try {
+                    await fetch("/api/saved-content", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic, content: studentFileContent, subject: studentContentSubject || undefined, userName: user.name }) });
+                    alert("Contenido guardado. Ahora puedes usarlo en los chatbots.");
+                    setStudentFileContent(""); setStudentFileName("");
+                    const res = await fetch(`/api/saved-content?userName=${encodeURIComponent(user.name)}`); const data = await res.json(); setStudentSavedContent(data);
+                  } catch { alert("Error al guardar"); }
+                }} disabled={studentUploading || !studentFileContent.trim()}
+                  className="bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white px-6 py-2.5 rounded-xl font-medium hover:from-[#0C043F]/90 hover:to-[#e71367]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">
+                  {studentUploading ? "Procesando..." : "Guardar Contenido"}
+                </button>
+                {studentSavedContent.length > 0 && (
+                  <div className="border-t border-gray-100 pt-4 mt-4">
+                    <p className="text-sm font-medium text-gray-600 mb-2">Contenido guardado:</p>
+                    <div className="space-y-1">
+                      {studentSavedContent.map((c) => (
+                        <div key={c.id} className="flex justify-between items-center text-sm bg-gray-50 rounded-lg px-3 py-2">
+                          <span className="text-gray-700 font-medium">{c.topic}</span>
+                          <button onClick={async () => { try { await fetch(`/api/saved-content?id=${c.id}`, { method: "DELETE" }); const res = await fetch(`/api/saved-content?userName=${encodeURIComponent(user.name)}`); const data = await res.json(); setStudentSavedContent(data); } catch {} }} className="text-red-400 hover:text-red-600 text-xs">Eliminar</button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {activeTab === "chat" && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-[calc(100vh-12rem)]">
@@ -1562,6 +1849,64 @@ function StudentDashboard({ user, onLogout }) {
             </div>
           )}
 
+          {activeTab === "apoyo" && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <h2 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2"><TabIcon id="apoyo" /> Solicitar Clase de Apoyo</h2>
+              {apoyoSent ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <p className="text-green-700 font-semibold text-lg mb-1">¡Solicitud enviada!</p>
+                  <p className="text-green-600 text-sm mb-6">El docente recibirá tu pedido de clase de apoyo.</p>
+                  <button onClick={() => { setApoyoSent(false); setApoyoTopic(""); setApoyoSubject(""); setApoyoSelectedTeacher(apoyoTeachers.length > 0 ? apoyoTeachers[0].username : ""); }} className="bg-[#0C043F] text-white px-6 py-2.5 rounded-xl font-medium hover:bg-[#0C043F]/90 transition shadow-sm">Solicitar otra</button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1.5">Docente</label>
+                    {apoyoTeachers.length === 0 ? (
+                      <p className="text-sm text-gray-400">Cargando docentes...</p>
+                    ) : (
+                      <div className="flex gap-2 flex-wrap">
+                        {apoyoTeachers.map((t) => (
+                          <button key={t.username} onClick={() => setApoyoSelectedTeacher(t.username)}
+                            className={`px-4 py-2 rounded-xl text-sm font-medium transition ${apoyoSelectedTeacher === t.username ? "bg-[#0C043F] text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                            {t.username}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1.5">Materia</label>
+                    <input type="text" value={apoyoSubject} onChange={(e) => setApoyoSubject(e.target.value)}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      placeholder="Ej: Programación en JavaScript" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema de la clase</label>
+                    <textarea value={apoyoTopic} onChange={(e) => setApoyoTopic(e.target.value)} rows={3}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y"
+                      placeholder="Ej: Quisiera repasar los fundamentos de JavaScript y array methods..." />
+                  </div>
+                  <button onClick={async () => {
+                    if (!apoyoTopic.trim() || !apoyoSelectedTeacher) return;
+                    setApoyoSending(true);
+                    try {
+                      await fetch("/api/support-requests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ studentName: user.name, teacherName: apoyoSelectedTeacher, subject: apoyoSubject, topic: apoyoTopic }) });
+                      setApoyoSent(true);
+                    } catch { alert("Error al enviar solicitud"); }
+                    setApoyoSending(false);
+                  }} disabled={apoyoSending || !apoyoTopic.trim() || !apoyoSelectedTeacher}
+                    className="bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white px-6 py-2.5 rounded-xl font-medium hover:from-[#0C043F]/90 hover:to-[#e71367]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">
+                    {apoyoSending ? "Enviando..." : "Enviar Solicitud"}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           {activeTab === "results" && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               {selectedResult ? (
@@ -1574,6 +1919,11 @@ function StudentDashboard({ user, onLogout }) {
                   <div className="mb-4 p-3 bg-[#e71367]/10 rounded-xl text-sm">
                     <span className="font-semibold text-[#0C043F]">{selectedResult.score}/{selectedResult.total} correctas</span>
                     <span className="text-[#e71367] ml-2">({Math.round((selectedResult.score / selectedResult.total) * 100)}%)</span>
+                    {Math.round((selectedResult.score / selectedResult.total) * 100) < 60 ? (
+                      <span className="ml-2 text-red-600 font-semibold text-xs bg-red-100 px-2 py-0.5 rounded-full">Reprobó</span>
+                    ) : (
+                      <span className="ml-2 text-green-600 font-semibold text-xs bg-green-100 px-2 py-0.5 rounded-full">Aprobó</span>
+                    )}
                   </div>
                   <QuizView questions={selectedResult.questions} initialAnswers={selectedResult.userAnswers} initialSubmitted={true} />
                 </div>
@@ -1598,6 +1948,11 @@ function StudentDashboard({ user, onLogout }) {
                           <div className="flex gap-4 text-sm ml-10">
                             <span className="text-green-600 font-semibold">{r.score}/{r.total} correctas</span>
                             <span className="text-gray-500">({Math.round((r.score / r.total) * 100)}%)</span>
+                            {Math.round((r.score / r.total) * 100) < 60 ? (
+                              <span className="text-red-600 font-semibold text-xs bg-red-100 px-2 py-0.5 rounded-full">Reprobó</span>
+                            ) : (
+                              <span className="text-green-600 font-semibold text-xs bg-green-100 px-2 py-0.5 rounded-full">Aprobó</span>
+                            )}
                             {(!r.questions || !r.userAnswers) && <span className="text-gray-400 text-xs">(detalle no disponible)</span>}
                           </div>
                         </div>

@@ -17,7 +17,8 @@
   {
     "username": "agustina_romano",
     "password": "agustina",
-    "role": "student"
+    "role": "student",
+    "level": "4to"
   },
   {
     "username": "meli_biegun",
@@ -35,5 +36,23 @@
     "username": "dario",
     "password": "dario",
     "role": "teacher"
+  },
+  {
+    "username": "dante_orti",
+    "password": "gropponico123",
+    "role": "student",
+    "level": "3ro"
+  },
+  {
+    "username": "martu a",
+    "password": "123456",
+    "role": "student",
+    "level": "3ro"
+  },
+  {
+    "username": "chloé_donnewald",
+    "password": "frani123",
+    "role": "student",
+    "level": "3ro"
   }
 ]

@@ -1,663 +1,174 @@
 [
   {
-    "id": 1782350041400,
-    "topic": "ciclos",
+    "id": 1782407185268,
+    "topic": "Arrays - ciclos 1 y 2",
     "questions": [
       {
         "question": "¿Qué significa iterar en programación?",
         "options": [
           "Repetir una acción varias veces",
-          "Automatizar tareas que no se repiten",
-          "Ejecutar un bloque de código solo una vez"
+          "Ejecutar un bloque de código una sola vez",
+          "Crear un array vacío",
+          "Leer un archivo de texto"
         ],
         "correctIndex": 0
       },
       {
-        "question": "¿Cómo funciona un ciclo while?",
+        "question": "¿Cuál es la sintaxis básica de un ciclo while en TypeScript?",
         "options": [
-          "Evalúa una condición y ejecuta un bloque de código solo una vez",
-          "Ejecuta un bloque de código varias veces hasta que una condición se cumpla",
-          "No hay forma de ejecutar un bloque de código varias veces en programación"
+          "while (condición) { código }",
+          "for (inicialización; condición; actualización) { código }",
+          "if (condición) { código }",
+          "switch (condición) { código }"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué sucede cuando la condición de un ciclo while es falsa?",
+        "options": [
+          "El ciclo se repite indefinidamente",
+          "El ciclo se detiene y el programa sigue",
+          "El programa se detiene con un error",
+          "El ciclo se salta y se ejecuta el código siguiente"
         ],
         "correctIndex": 1
       },
       {
-        "question": "¿Qué es un ciclo acotado?",
+        "question": "¿Qué es un array en TypeScript?",
         "options": [
-          "Un ciclo que nunca terminals",
+          "Un tipo de dato que sirve para guardar un conjunto de números",
+          "Un tipo de dato que sirve para guardar un conjunto de strings",
+          "Un tipo de dato que sirve para guardar un conjunto de cosas",
+          "Un tipo de dato que sirve para guardar un solo valor"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Cómo se especifica el tipo de los elementos que va a contener un array en TypeScript?",
+        "options": [
+          "Usando la sintaxis []",
+          "Usando la sintaxis {}",
+          "Usando la sintaxis ()",
+          "Usando la sintaxis string[] o number[]"
+        ],
+        "correctIndex": 3
+      },
+      {
+        "question": "¿Qué es un índice en un array?",
+        "options": [
+          "Un número que representa la posición de un elemento en el array",
+          "Un string que representa la posición de un elemento en el array",
+          "Un booleano que representa la posición de un elemento en el array",
+          "Un objeto que representa la posición de un elemento en el array"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Cómo se accede a un elemento de un array en TypeScript?",
+        "options": [
+          "Usando la sintaxis array[indice]",
+          "Usando la sintaxis array.get(indice)",
+          "Usando la sintaxis array.set(indice, valor)",
+          "Usando la sintaxis array.push(valor)"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué método se utiliza para agregar un elemento al final de un array en TypeScript?",
+        "options": [
+          "push()",
+          "pop()",
+          "shift()",
+          "unshift()"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué método se utiliza para eliminar el último elemento de un array en TypeScript?",
+        "options": [
+          "push()",
+          "pop()",
+          "shift()",
+          "unshift()"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué propiedad se utiliza para saber cuántos elementos hay en un array en TypeScript?",
+        "options": [
+          "length",
+          "size",
+          "count",
+          "quantity"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Cómo se itera sobre un array en TypeScript utilizando un ciclo while?",
+        "options": [
+          "Usando la sintaxis while (i < array.length) { código }",
+          "Usando la sintaxis for (let i = 0; i < array.length; i++) { código }",
+          "Usando la sintaxis foreach (let elemento in array) { código }",
+          "Usando la sintaxis for (let elemento of array) { código }"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Qué es un ciclo infinito en TypeScript?",
+        "options": [
+          "Un ciclo que se repite una sola vez",
           "Un ciclo que se repite un número fijo de veces",
-          "Un ciclo que se repite mientras una condición sea verdadera"
+          "Un ciclo que se repite indefinidamente",
+          "Un ciclo que se detiene con un error"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué estructura de control se utiliza para iterar sobre un array en TypeScript de manera compacta y clara?",
+        "options": [
+          "Ciclo while",
+          "Ciclo for",
+          "Ciclo foreach",
+          "Ciclo do-while"
         ],
         "correctIndex": 1
       },
       {
-        "question": "¿Qué pasa en un ciclo acotado si la condición se cumple en cada repetición?",
+        "question": "¿Qué es la inicialización en un ciclo for en TypeScript?",
         "options": [
-          "El ciclo se detiene solo cuando se cumple una condición determinada",
-          "El ciclo no termina nunca",
-          "El ciclo sigue repitiéndose indefinidamente"
+          "La condición que se evalúa antes de cada vuelta",
+          "La actualización que se ejecuta al final de cada vuelta",
+          "La parte del código que se ejecuta una sola vez antes de que arranque el ciclo",
+          "La parte del código que se ejecuta después de que termina el ciclo"
         ],
         "correctIndex": 2
       },
       {
-        "question": "¿Qué es un ciclo infinito?",
+        "question": "¿Qué es la condición en un ciclo for en TypeScript?",
         "options": [
-          "Un ciclo que se repite un número fijo de veces",
-          "Un ciclo que se repite mientras una condición sea verdadera hasta que cambie",
-          "Un ciclo que nunca termina"
+          "La parte del código que se ejecuta una sola vez antes de que arranque el ciclo",
+          "La actualización que se ejecuta al final de cada vuelta",
+          "La condición que se evalúa antes de cada vuelta",
+          "La parte del código que se ejecuta después de que termina el ciclo"
         ],
         "correctIndex": 2
       },
       {
-        "question": "¿Por qué es importante asegurarse de que el cuerpo de un ciclo cambie algo que pueda hacer que la condición se vuelva falsa?",
+        "question": "¿Qué es la actualización en un ciclo for en TypeScript?",
         "options": [
-          "Para evitar ciclos infinitos",
-          "Para asegurarse de que el programa funcione correctamente",
-          "No es importante"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Qué es lo que cambia en cada repetición de un ciclo acotado?",
-        "options": [
-          "La condición que se evalúa",
-          "El valor de una variable interna del ciclo",
-          "El valor de una variable externa al ciclo"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Qué es lo que define el número de repeticiones de un ciclo acotado?",
-        "options": [
-          "La condición que se evalúa",
-          "El valor de una variable externa al ciclo",
-          "Un número fijo de veces establecido al inicio del ciclo"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Qué es lo que define la condición de parada de un ciclo no acotado?",
-        "options": [
-          "Un número fijo de veces",
-          "Un condición dinámica que cambia en cada repetición",
-          "Un valor establecido al inicio del ciclo"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Qué es lo que evita que un ciclo se convierta en infinito?",
-        "options": [
-          "Un número fijo de veces establecido al inicio del ciclo",
-          "Un condición dinámica que cambia en cada repetición",
-          "El cuerpo del ciclo que cambia algo que hace que la condición se vuelva falsa"
+          "La condición que se evalúa antes de cada vuelta",
+          "La parte del código que se ejecuta una sola vez antes de que arranque el ciclo",
+          "La actualización que se ejecuta al final de cada vuelta",
+          "La parte del código que se ejecuta después de que termina el ciclo"
         ],
         "correctIndex": 2
       }
     ],
-    "publishedAt": "2026-06-25T01:14:01.400Z"
-  },
-  {
-    "id": 1782385284123,
-    "topic": "Cpu",
-    "questions": [
-      {
-        "question": "¿Cuál fue el primer microprocesador comercialmente disponible?",
-        "options": [
-          "Intel 4004",
-          "Intel 8008",
-          "Intel 8080",
-          "ARM 700"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Qué tipo de arquitectura utiliza el procesador Intel Core?",
-        "options": [
-          "x86/x64",
-          "ARM",
-          "CISC",
-          "RISC"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Cuál es el propósito de la Unidad de Control en un microprocesador?",
-        "options": [
-          "Realizar operaciones matemáticas",
-          "Decodificar instrucciones del programa",
-          "Gestionar la ejecución de instrucciones",
-          "Almacenar datos"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Qué tipo de microprocesadores utiliza una arquitectura reducida de instrucciones?",
-        "options": [
-          "CISC",
-          "RISC",
-          "x86/x64",
-          "ARM"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Qué es el conjunto de instrucciones utilizado por los procesadores Intel x86?",
-        "options": [
-          "CISC",
-          "RISC",
-          "x86/x64",
-          "ARM"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Qué tipo de microprocesadores están diseñados para manejar cargas de trabajo intensivas y operaciones continuas?",
-        "options": [
-          "Procesadores de escritorio",
-          "Procesadores móviles",
-          "Procesadores de servidor",
-          "Procesadores de juego"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Qué técnica permite la ejecución de varias etapas de diferentes instrucciones simultáneamente?",
-        "options": [
-          "Pipelines",
-          "Multithreading",
-          "Ciclo de reloj",
-          "DVFS"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Qué es el proceso de ajustar dinámicamente la frecuencia y el voltaje del procesador?",
-        "options": [
-          "DVFS",
-          "Multithreading",
-          "Pipelines",
-          "Ciclo de reloj"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Qué fabricante es especializado en el diseño de arquitecturas de procesadores de bajo consumo?",
-        "options": [
-          "Intel",
-          "AMD",
-          "ARM Holdings",
-          "Apple"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Qué serie de procesadores desarrolla Apple para dispositivos móviles y computadoras personales?",
-        "options": [
-          "serie A",
-          "serie B",
-          "serie C",
-          "serie M"
-        ],
-        "correctIndex": 0
-      }
-    ],
-    "publishedAt": "2026-06-25T11:01:24.123Z"
-  },
-  {
-    "id": 1782389612227,
-    "topic": "Introducción a Pyhton",
-    "questions": [
-      {
-        "question": "¿Qué lenguaje de programación es fácil de aprender y usar?",
-        "options": [
-          "Java",
-          "C++",
-          "Python",
-          "JavaScript"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Qué sistemas operativos puede ejecutar Python?",
-        "options": [
-          "Windows, macOS y Linux",
-          "Windows y macOS",
-          "Linux y Chrome OS",
-          "Windows y Linux"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Cuál es un objetivo principal de Python?",
-        "options": [
-          "Crear aplicaciones de videojuegos",
-          "Desarrollar inteligencia artificial y analizar datos",
-          "Crear sitios web dinámicos",
-          "Realizar tareas de oficina"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Quién creó el lenguaje de programación Python?",
-        "options": [
-          "Bill Gates",
-          "Guido van Rossum",
-          "Steve Jobs",
-          "Linus Torvalds"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Qué hace el código `print('Hola, mundo')` en Python?",
-        "options": [
-          "Crea un archivo de texto con el mensaje",
-          "Muestra el texto 'Hola, mundo' en la pantalla",
-          "Realiza una división matemática",
-          "Crea una variable con el valor 'Hola, mundo'"
-        ],
-        "correctIndex": 1
-      }
-    ],
-    "publishedAt": "2026-06-25T12:13:32.227Z",
-    "deadline": "2026-06-25T09:20"
-  },
-  {
-    "id": 1782389800417,
-    "topic": "conceptos basicós de python",
-    "questions": [
-      {
-        "question": "¿Cuál es el propósito de la función print() en Python?",
-        "options": [
-          "Guardar información en variables",
-          "Mostrar texto en pantalla",
-          "Pedir información al usuario",
-          "Tomar decisiones"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Qué es una variable en Python?",
-        "options": [
-          "Un tipo de dato",
-          "Un valor que cambia",
-          "Un espacio de memoria con nombre",
-          "Un bucle"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Cómo se pueden realizar las operaciones de suma y resta en Python?",
-        "options": [
-          "Usando el operador + y -",
-          "Usando el operador * y /",
-          "Usando el operador == y !=",
-          "Usando el operador if y else"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Cómo se define una función en Python?",
-        "options": [
-          "Usando la palabra clave if",
-          "Usando la palabra clave for",
-          "Usando la palabra clave def",
-          "Usando la palabra clave while"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Cómo se calcula la suma de los primeros n números en Python?",
-        "options": [
-          "n * (n + 1) // 2",
-          "n * (n - 1) // 2",
-          "n * (n + 2) // 2",
-          "n * (n - 2) // 2"
-        ],
-        "correctIndex": 0
-      }
-    ],
-    "publishedAt": "2026-06-25T12:16:40.417Z",
-    "deadline": "2026-06-25T09:17"
-  },
-  {
-    "id": 1782394190037,
-    "topic": "qué es el módelo osi",
-    "questions": [
-      {
-        "question": "¿Quién creó el Modelo OSI?",
-        "options": [
-          "Bob Kahn y Vint Cerf",
-          "Larry Roberts y Frank Heart",
-          "Donald Davies y Roger Scantlebury",
-          "Steve Crocker y Jon Postel"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Cuántas capas tiene el Modelo OSI?",
-        "options": [
-          "4",
-          "5",
-          "6",
-          "7"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Cuál es la capa más baja del Modelo OSI?",
-        "options": [
-          "Capa de enlace de datos",
-          "Capa de red",
-          "Capa de transporte",
-          "Capa física"
-        ],
-        "correctIndex": 3
-      },
-      {
-        "question": "¿Qué es el propósito de la capa de presentación del Modelo OSI?",
-        "options": [
-          "Encriptar y descifrar datos",
-          "Convertir formatos de datos",
-          "Proveer dirección de red",
-          "Realizar la autenticación"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Por qué se creó el Modelo OSI?",
-        "options": [
-          "Para mejorar la seguridad en redes",
-          "Para facilitar la comunicación entre computadoras",
-          "Para diseñar protocolos de comunicación",
-          "Para crear una red global"
-        ],
-        "correctIndex": 2
-      }
-    ],
-    "publishedAt": "2026-06-25T13:29:50.037Z",
-    "deadline": "2026-06-25T11:30",
-    "level": "3ro",
-    "subject": "Redes"
-  },
-  {
-    "id": 1782395990557,
-    "topic": "Modelo OSI",
-    "questions": [
-      {
-        "question": "¿Cuál es el nombre del nivel más alto del modelo OSI?",
-        "options": [
-          "Paso de datos",
-          "Paso de control",
-          "Paso de enlace de datos",
-          "Aplicación"
-        ],
-        "correctIndex": 3
-      },
-      {
-        "question": "¿Qué función realiza el nivel de enlace de datos en el modelo OSI?",
-        "options": [
-          "Asignar direcciones IP",
-          "Ejecutar protocolos de transporte",
-          "Reenviar paquetes de datos",
-          "Conectar dispositivos en una red"
-        ],
-        "correctIndex": 3
-      },
-      {
-        "question": "¿Cuántos niveles hay en el modelo OSI?",
-        "options": [
-          "7",
-          "6",
-          "5",
-          "4"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Qué es el protocolo TCP/IP en relación con el modelo OSI?",
-        "options": [
-          "Un nivel de aplicación",
-          "Un conjunto de protocolos que reemplazan al modelo OSI",
-          "Un protocolo de transporte",
-          "Un protocolo de enlace de datos"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Qué función realiza el nivel de red en el modelo OSI?",
-        "options": [
-          "Routerar paquetes de datos",
-          "Asignar direcciones IP",
-          "Reenviar paquetes de datos",
-          "Ejecutar protocolos de transporte"
-        ],
-        "correctIndex": 0
-      }
-    ],
-    "publishedAt": "2026-06-25T13:59:50.557Z",
-    "deadline": "2026-06-25T11:35",
-    "level": "3ro",
-    "subject": "Redes"
-  },
-  {
-    "id": 1782397559345,
-    "topic": "modelo osi",
-    "questions": [
-      {
-        "question": "¿Qué es el modelo OSI?",
-        "options": [
-          "Un protocolo de internet",
-          "Un modelo de referencia para redes de computadoras",
-          "Un tipo de red local",
-          "Un software de seguridad"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Cuántos niveles tiene el modelo OSI?",
-        "options": [
-          "4",
-          "5",
-          "7",
-          "8"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Cuál es el primer nivel del modelo OSI?",
-        "options": [
-          "Físico",
-          "Datos",
-          "Red",
-          "Enlace de datos"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Qué nivel del modelo OSI se encarga de la autenticación y el control de acceso?",
-        "options": [
-          "Nivel de aplicación",
-          "Nivel de presentación",
-          "Nivel de sesión",
-          "Nivel de transporte"
-        ],
-        "correctIndex": 3
-      },
-      {
-        "question": "¿Qué proceso se utiliza en el nivel de aplicación del modelo OSI para establecer una comunicación entre dos aplicaciones?",
-        "options": [
-          "Sincronización",
-          "Autenticación",
-          "Sesión",
-          "Conexión TCP/IP"
-        ],
-        "correctIndex": 3
-      },
-      {
-        "question": "¿Qué nivel del modelo OSI se encarga de la transferencia de datos entre dos redes?",
-        "options": [
-          "Nivel de enlace de datos",
-          "Nivel de red",
-          "Nivel de transporte",
-          "Nivel de sesión"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Qué tipo de errores se detectan en el nivel de enlace de datos del modelo OSI?",
-        "options": [
-          "Errores de bit",
-          "Errores de paquete",
-          "Errores de flujo",
-          "Errores de sincronización"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Qué nivel del modelo OSI se encarga de la gestión de la conexión entre dos dispositivos?",
-        "options": [
-          "Nivel de sesión",
-          "Nivel de transporte",
-          "Nivel de red",
-          "Nivel de enlace de datos"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Qué protocolo del TCP/IP se utiliza en el nivel de transporte del modelo OSI para proporcionar una conexión confiable?",
-        "options": [
-          "HTTP",
-          "FTP",
-          "TCP",
-          "UDP"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Qué nivel del modelo OSI se encarga de la gestión de la conexión y la seguridad de la comunicación?",
-        "options": [
-          "Nivel de sesión",
-          "Nivel de presentación",
-          "Nivel de transporte",
-          "Nivel de aplicación"
-        ],
-        "correctIndex": 0
-      }
-    ],
-    "publishedAt": "2026-06-25T14:25:59.345Z",
-    "deadline": "2026-06-25T11:30",
-    "level": "3ro",
-    "subject": "Redes"
-  },
-  {
-    "id": 1782400291733,
-    "topic": "U3- modelo osi acortado",
-    "questions": [
-      {
-        "question": "¿Cuántas capas tiene el Modelo OSI?",
-        "options": [
-          "5",
-          "7",
-          "9",
-          "11"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Qué función tiene la Capa Física en el Modelo OSI?",
-        "options": [
-          "Proporciona conectividad entre sistemas de hosts",
-          "Define las especificaciones eléctricas y mecánicas para activar y mantener el enlace físico",
-          "Transmite datos de manera confiable a través de un enlace físico",
-          "Establece los enlaces necesarios entre dispositivos físicos"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Qué capa se encarga de manejar las identificaciones físicas de cada dispositivo conectado a la red y establecer los enlaces necesarios?",
-        "options": [
-          "Capa de Enlace de Datos",
-          "Capa de Red",
-          "Capa de Transporte",
-          "Capa de Sesión"
-        ],
-        "correctIndex": 0
-      },
-      {
-        "question": "¿Cuál es el protocolo orientado a conexión utilizado en la Capa de Transporte?",
-        "options": [
-          "UDP",
-          "TCP",
-          "HTTP",
-          "SMTP"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Qué capa se encarga de establecer, mantener y cerrar las sesiones entre equipos?",
-        "options": [
-          "Capa de Presentación",
-          "Capa de Aplicación",
-          "Capa de Sesión",
-          "Capa de Transporte"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Qué capa se encarga de presentar los datos a la capa de aplicación y transformarlos en formatos como texto, imágenes y sonido?",
-        "options": [
-          "Capa de Enlace de Datos",
-          "Capa de Red",
-          "Capa de Presentación",
-          "Capa de Aplicación"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Cuál es el protocolo utilizado para la transferencia de archivos en la Capa de Aplicación?",
-        "options": [
-          "HTTP",
-          "SMTP",
-          "POP",
-          "FTP"
-        ],
-        "correctIndex": 3
-      },
-      {
-        "question": "¿Qué capa se encarga de conectar dos sistemas de hosts que pueden estar ubicados en redes geográficamente distintas?",
-        "options": [
-          "Capa de Enlace de Datos",
-          "Capa de Red",
-          "Capa de Transporte",
-          "Capa de Sesión"
-        ],
-        "correctIndex": 1
-      },
-      {
-        "question": "¿Qué es el MTU (Maximum Transmission Unit) en la Capa de Transporte?",
-        "options": [
-          "La velocidad de transmisión máxima",
-          "La cantidad máxima de datos que se pueden transmitir en un paquete",
-          "La longitud máxima de un paquete",
-          "La distancia máxima de transmisión"
-        ],
-        "correctIndex": 2
-      },
-      {
-        "question": "¿Qué capa se encarga de interactuar con la capa de presentación y representar la interfaz con el usuario?",
-        "options": [
-          "Capa de Enlace de Datos",
-          "Capa de Red",
-          "Capa de Aplicación",
-          "Capa de Sesión"
-        ],
-        "correctIndex": 3
-      }
-    ],
-    "publishedAt": "2026-06-25T15:11:31.733Z",
+    "publishedAt": "2026-06-25T17:06:25.268Z",
     "deadline": "2026-06-25T17:30",
     "level": "3ro",
-    "subject": "Redes",
-    "teacherName": "docente"
+    "subject": "Software",
+    "teacherName": "shuli",
+    "forStudent": null
   }
 ]

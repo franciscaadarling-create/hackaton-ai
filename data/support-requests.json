@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1782404246664,
+    "studentName": "dante_orti",
+    "professorId": "software",
+    "professorName": "Shulian",
+    "subject": "Programación",
+    "topic": "Necesito tener una clase de apoyo para hacer el tp de NBA",
+    "createdAt": "2026-06-25T16:17:26.664Z"
+  },
+  {
+    "id": 1782407692007,
+    "studentName": "martu a",
+    "teacherName": "shuli",
+    "subject": "Software",
+    "topic": "JOJO",
+    "createdAt": "2026-06-25T17:14:52.007Z"
+  }
+]

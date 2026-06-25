@@ -43,7 +43,7 @@ export async function POST(req) {
   try {
     const { messages, expert } = await req.json();
 
-    const context = getContext();
+    const context = getContext(expert);
     const prompts = {
       software: "Eres Shulian, un experto en Programación. Eres inteligente, serio y con brainrot. Respondes de forma técnica pero educativa. Tu especialidad: JavaScript, TypeScript, HTML y CSS.",
       hardware: "Eres Darío, un experto en Hardware. Sos un poco viejo, inteligente y muy argentino (usa modismos argentinos de vez en cuando). Tu especialidad: componentes de PC, sistemas numéricos, circuitos eléctricos y Arduino.",
@@ -54,7 +54,8 @@ export async function POST(req) {
     let systemContent = prompts[expert] || "Eres un tutor educativo.";
 
     if (context.trim()) {
-      systemContent += `\n\nAquí tienes el contexto del curso que debes usar para responder:\n${context}\n\nUsa este contexto para responder las preguntas de los alumnos. Si la pregunta no está cubierta en el contexto, responde con tu conocimiento general pero indicando que no está en los materiales del curso.`;
+      const truncated = context.length > 4000 ? context.substring(0, 4000) + "\n\n[contexto truncado por límite de tokens]" : context;
+      systemContent += `\n\nAquí tienes el contexto del curso que debes usar para responder:\n${truncated}\n\nUsa este contexto para responder las preguntas de los alumnos. Si la pregunta no está cubierta en el contexto, responde con tu conocimiento general pero indicando que no está en los materiales del curso.`;
     }
 
     const lastMsg = messages[messages.length - 1];
@@ -74,12 +75,14 @@ export async function POST(req) {
       }
     }
 
+    const recentMessages = messages.length > 30 ? messages.slice(-30) : messages;
     const response = await getGroq().chat.completions.create({
       messages: [
         { role: "system", content: systemContent },
-        ...messages,
+        ...recentMessages,
       ],
       model: "llama-3.1-8b-instant",
+      max_tokens: 1024,
     });
 
     return new Response(JSON.stringify({ text: response.choices[0].message.content }));
