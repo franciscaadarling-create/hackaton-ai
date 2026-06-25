@@ -202,5 +202,121 @@
       }
     ],
     "publishedAt": "2026-06-25T11:01:24.123Z"
+  },
+  {
+    "id": 1782389612227,
+    "topic": "Introducción a Pyhton",
+    "questions": [
+      {
+        "question": "¿Qué lenguaje de programación es fácil de aprender y usar?",
+        "options": [
+          "Java",
+          "C++",
+          "Python",
+          "JavaScript"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué sistemas operativos puede ejecutar Python?",
+        "options": [
+          "Windows, macOS y Linux",
+          "Windows y macOS",
+          "Linux y Chrome OS",
+          "Windows y Linux"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Cuál es un objetivo principal de Python?",
+        "options": [
+          "Crear aplicaciones de videojuegos",
+          "Desarrollar inteligencia artificial y analizar datos",
+          "Crear sitios web dinámicos",
+          "Realizar tareas de oficina"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Quién creó el lenguaje de programación Python?",
+        "options": [
+          "Bill Gates",
+          "Guido van Rossum",
+          "Steve Jobs",
+          "Linus Torvalds"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué hace el código `print('Hola, mundo')` en Python?",
+        "options": [
+          "Crea un archivo de texto con el mensaje",
+          "Muestra el texto 'Hola, mundo' en la pantalla",
+          "Realiza una división matemática",
+          "Crea una variable con el valor 'Hola, mundo'"
+        ],
+        "correctIndex": 1
+      }
+    ],
+    "publishedAt": "2026-06-25T12:13:32.227Z",
+    "deadline": "2026-06-25T09:20"
+  },
+  {
+    "id": 1782389800417,
+    "topic": "conceptos basicós de python",
+    "questions": [
+      {
+        "question": "¿Cuál es el propósito de la función print() en Python?",
+        "options": [
+          "Guardar información en variables",
+          "Mostrar texto en pantalla",
+          "Pedir información al usuario",
+          "Tomar decisiones"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué es una variable en Python?",
+        "options": [
+          "Un tipo de dato",
+          "Un valor que cambia",
+          "Un espacio de memoria con nombre",
+          "Un bucle"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Cómo se pueden realizar las operaciones de suma y resta en Python?",
+        "options": [
+          "Usando el operador + y -",
+          "Usando el operador * y /",
+          "Usando el operador == y !=",
+          "Usando el operador if y else"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Cómo se define una función en Python?",
+        "options": [
+          "Usando la palabra clave if",
+          "Usando la palabra clave for",
+          "Usando la palabra clave def",
+          "Usando la palabra clave while"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Cómo se calcula la suma de los primeros n números en Python?",
+        "options": [
+          "n * (n + 1) // 2",
+          "n * (n - 1) // 2",
+          "n * (n + 2) // 2",
+          "n * (n - 2) // 2"
+        ],
+        "correctIndex": 0
+      }
+    ],
+    "publishedAt": "2026-06-25T12:16:40.417Z",
+    "deadline": "2026-06-25T09:17"
   }
 ]

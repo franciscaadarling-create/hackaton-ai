@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1782389612614,
+    "quizId": 1782389612227,
+    "topic": "Introducción a Pyhton",
+    "deadline": "2026-06-25T09:20",
+    "publishedAt": "2026-06-25T12:13:32.227Z",
+    "createdAt": "2026-06-25T12:13:32.614Z",
+    "readBy": [
+      "alumno"
+    ]
+  },
+  {
+    "id": 1782389800733,
+    "quizId": 1782389800417,
+    "topic": "conceptos basicós de python",
+    "deadline": "2026-06-25T09:17",
+    "publishedAt": "2026-06-25T12:16:40.417Z",
+    "createdAt": "2026-06-25T12:16:40.733Z",
+    "readBy": [
+      "alumno"
+    ]
+  }
+]

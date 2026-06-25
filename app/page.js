@@ -71,6 +71,7 @@ function TabIcon({ id }) {
     quiz: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>,
     chat: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>,
     results: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>,
+    juegos: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   };
   return icons[id] || null;
 }
@@ -199,7 +200,7 @@ function MobileNav({ tabs, activeTab, onTabChange }) {
   );
 }
 
-function DashboardHeader({ title, userName, onLogout }) {
+function DashboardHeader({ title, userName, onLogout, notifCount, onNotifClick }) {
   return (
     <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3">
       <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -212,6 +213,12 @@ function DashboardHeader({ title, userName, onLogout }) {
         <div className="hidden md:block text-lg font-bold text-gray-800">{title}</div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
+            {notifCount > 0 && (
+              <button onClick={onNotifClick} className="relative mr-1" title="Nuevas tareas">
+                <svg className="w-5 h-5 text-orange-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" /></svg>
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{notifCount}</span>
+              </button>
+            )}
             <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
               <span className="text-sm font-semibold text-indigo-600">{userName.charAt(0).toUpperCase()}</span>
             </div>
@@ -244,6 +251,7 @@ function TeacherDashboard({ user, onLogout }) {
   const [publishedQuizzes, setPublishedQuizzes] = useState([]);
   const [publishing, setPublishing] = useState(false);
   const [questionCount, setQuestionCount] = useState(5);
+  const [deadline, setDeadline] = useState("");
   const [contextText, setContextText] = useState("");
   const [contextUrl, setContextUrl] = useState("");
   const [fetchingUrl, setFetchingUrl] = useState(false);
@@ -325,8 +333,12 @@ function TeacherDashboard({ user, onLogout }) {
     if (!quiz || quiz.error) return; setPublishing(true);
     try {
       const qTopic = selectedContentIds.length > 0 ? savedContentList.filter((c) => selectedContentIds.includes(c.id)).map((c) => c.topic).join(" + ") : topic;
-      await fetch("/api/quizzes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic: qTopic, questions: quiz }) });
-      setQuiz(null); loadQuizzes(); alert("Quiz publicado. Los alumnos ya pueden verlo.");
+      const res = await fetch("/api/quizzes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic: qTopic, questions: quiz, deadline: deadline || null }) });
+      if (deadline) {
+        const published = await res.json();
+        await fetch("/api/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ quizId: published.id, topic: qTopic, deadline, publishedAt: published.publishedAt }) });
+      }
+      setQuiz(null); loadQuizzes(); setDeadline(""); alert("Quiz publicado. Los alumnos ya pueden verlo.");
     } catch { alert("Error al publicar el quiz"); }
     setPublishing(false);
   };
@@ -492,6 +504,10 @@ function TeacherDashboard({ user, onLogout }) {
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><TabIcon id="quiz" /> Quiz Generado</h3>
                   <QuizView questions={quiz} />
+                  <div className="mt-4 space-y-2">
+                    <label className="block text-sm font-medium text-gray-600">Fecha límite (opcional)</label>
+                    <input type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none text-sm" />
+                  </div>
                   <button onClick={publishQuiz} disabled={publishing} className="mt-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 transition shadow-sm">{publishing ? "Publicando..." : "Publicar Quiz para Alumnos"}</button>
                 </div>
               )}
@@ -504,7 +520,14 @@ function TeacherDashboard({ user, onLogout }) {
                   <div className="space-y-2">
                     {publishedQuizzes.map((q) => (
                       <div key={q.id} className="flex justify-between items-center p-3 bg-green-50 rounded-xl text-sm border border-green-100">
-                        <span className="font-medium text-gray-700">{q.topic}</span>
+                        <div>
+                          <span className="font-medium text-gray-700">{q.topic}</span>
+                          {q.deadline && (
+                            <span className={`ml-2 text-xs ${new Date(q.deadline) > new Date() ? "text-orange-500" : "text-red-500"}`}>
+                              {new Date(q.deadline) > new Date() ? "⌛ " + new Date(q.deadline).toLocaleString() : "⛔ Vencido"}
+                            </span>
+                          )}
+                        </div>
                         <span className="text-gray-400 text-xs">{new Date(q.publishedAt).toLocaleString()}</span>
                       </div>
                     ))}
@@ -678,6 +701,173 @@ function QuizView({ questions, studentName, topic, onSubmitted, initialAnswers, 
   );
 }
 
+function MemoryGame({ pairs }) {
+  const [cards, setCards] = useState([]);
+  const [flipped, setFlipped] = useState([]);
+  const [matched, setMatched] = useState([]);
+  const [attempts, setAttempts] = useState(0);
+  const [lock, setLock] = useState(false);
+
+  useEffect(() => {
+    if (!pairs) return;
+    const all = pairs.flatMap((p, i) => [
+      { id: `t${i}`, pairIdx: i, text: p.term, type: "term" },
+      { id: `d${i}`, pairIdx: i, text: p.definition, type: "def" },
+    ]);
+    for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [all[i], all[j]] = [all[j], all[i]]; }
+    setCards(all);
+    setFlipped([]); setMatched([]); setAttempts(0);
+  }, [pairs]);
+
+  const handleClick = (card) => {
+    if (lock || flipped.includes(card.id) || matched.includes(card.pairIdx)) return;
+    const next = [...flipped, card.id];
+    setFlipped(next);
+    if (next.length === 2) {
+      setLock(true);
+      setAttempts((a) => a + 1);
+      const [a, b] = next.map((id) => cards.find((c) => c.id === id));
+      if (a.pairIdx === b.pairIdx && a.type !== b.type) {
+        setMatched((m) => [...m, a.pairIdx]);
+        setFlipped([]);
+        setLock(false);
+      } else {
+        setTimeout(() => { setFlipped([]); setLock(false); }, 800);
+      }
+    }
+  };
+
+  if (!pairs) return null;
+
+  return (
+    <div>
+      <p className="text-sm text-gray-500 mb-3">Intentos: {attempts} | Pares: {matched.length}/{pairs.length}</p>
+      <div className="grid grid-cols-4 gap-2">
+        {cards.map((card) => {
+          const isFlipped = flipped.includes(card.id) || matched.includes(card.pairIdx);
+          return (
+            <button key={card.id} onClick={() => handleClick(card)}
+              className={`h-20 rounded-xl text-xs font-medium transition-all duration-300 ${isFlipped ? "bg-indigo-100 text-indigo-800 border border-indigo-300 scale-100" : "bg-indigo-600 text-white hover:bg-indigo-700 scale-95 hover:scale-100"}`}>
+              {isFlipped ? <span className="block p-1 leading-tight">{card.text}</span> : <span className="text-lg">?</span>}
+            </button>
+          );
+        })}
+      </div>
+      {matched.length === pairs.length && <p className="text-center text-green-600 font-semibold mt-4">¡Completado en {attempts} intentos!</p>}
+    </div>
+  );
+}
+
+function HangmanGame({ words }) {
+  const [currentWord, setCurrentWord] = useState(null);
+  const [guessed, setGuessed] = useState([]);
+  const [wrong, setWrong] = useState(0);
+  const [done, setDone] = useState([]);
+  const MAX_WRONG = 6;
+
+  const startNew = useCallback(() => {
+    if (!words) return;
+    const remaining = words.filter((w) => !done.includes(w.word));
+    if (remaining.length === 0) { setCurrentWord(null); return; }
+    const w = remaining[Math.floor(Math.random() * remaining.length)];
+    setCurrentWord(w); setGuessed([]); setWrong(0);
+  }, [words, done]);
+
+  useEffect(() => { if (words && words.length > 0 && !currentWord) startNew(); }, [words, currentWord, startNew]);
+
+  const handleLetter = (letter) => {
+    if (!currentWord || guessed.includes(letter)) return;
+    setGuessed((g) => [...g, letter]);
+    if (!currentWord.word.includes(letter)) setWrong((w) => w + 1);
+  };
+
+  if (!words || words.length === 0) return <p className="text-gray-400 text-center">No hay palabras para jugar</p>;
+  if (!currentWord) return <p className="text-green-600 text-center font-semibold">¡Completaste todas las palabras!</p>;
+
+  const display = currentWord.word.split("").map((l) => (guessed.includes(l) ? l : "_")).join(" ");
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+  return (
+    <div className="text-center">
+      <div className="text-3xl font-mono tracking-widest mb-3">{display}</div>
+      <p className="text-sm text-gray-500 mb-1">Pista: {currentWord.hint}</p>
+      <p className="text-xs text-gray-400 mb-3">Errores: {wrong}/{MAX_WRONG}</p>
+      <div className="flex flex-wrap justify-center gap-1.5 mb-4">
+        {alphabet.map((l) => {
+          const used = guessed.includes(l);
+          const isCorrect = used && currentWord.word.includes(l);
+          return (
+            <button key={l} onClick={() => handleLetter(l)} disabled={used || wrong >= MAX_WRONG}
+              className={`w-8 h-8 rounded-lg text-sm font-medium transition ${used ? (isCorrect ? "bg-green-200 text-green-700" : "bg-red-200 text-red-700") : "bg-gray-100 text-gray-700 hover:bg-indigo-100"}`}>{l}</button>
+          );
+        })}
+      </div>
+      {wrong >= MAX_WRONG && <p className="text-red-600 font-semibold mb-2">¡Perdiste! La palabra era: <span className="font-mono">{currentWord.word}</span></p>}
+      {(wrong >= MAX_WRONG || !display.includes("_")) && (
+        <button onClick={() => { setDone((d) => [...d, currentWord.word]); startNew(); }} className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-indigo-700 transition">
+          {done.length < words.length - 1 ? "Siguiente palabra" : "Ver resultados"}
+        </button>
+      )}
+      {!display.includes("_") && wrong < MAX_WRONG && <p className="text-green-600 font-semibold mb-2">¡Correcto!</p>}
+    </div>
+  );
+}
+
+function SpeedQuizGame({ questions, onDone }) {
+  const [index, setIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [finished, setFinished] = useState(false);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    if (finished) return;
+    timerRef.current = setInterval(() => {
+      setTimeLeft((t) => {
+        if (t <= 1) { clearInterval(timerRef.current); nextQuestion(true); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timerRef.current);
+  }, [index, finished]);
+
+  const nextQuestion = (timedOut) => {
+    if (timedOut) setScore((s) => s);
+    const next = index + 1;
+    if (next >= questions.length) { setFinished(true); clearInterval(timerRef.current); onDone?.(score); }
+    else { setIndex(next); setTimeLeft(30); }
+  };
+
+  const handleAnswer = (optIdx) => {
+    if (optIdx === questions[index].correctIndex) setScore((s) => s + 1);
+    clearInterval(timerRef.current);
+    const next = index + 1;
+    if (next >= questions.length) { setFinished(true); onDone?.(optIdx === questions[index].correctIndex ? score + 1 : score); }
+    else { setIndex(next); setTimeLeft(30); }
+  };
+
+  if (!questions || questions.length === 0) return null;
+  if (finished) return <p className="text-center text-lg font-semibold text-indigo-700">¡Juego terminado! Puntaje: {score}/{questions.length}</p>;
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-3">
+        <span className="text-sm text-gray-500">Pregunta {index + 1}/{questions.length}</span>
+        <span className={`text-sm font-bold ${timeLeft <= 10 ? "text-red-500" : "text-gray-600"}`}>⏱ {timeLeft}s</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4"><div className="bg-indigo-500 h-1.5 rounded-full transition-all" style={{ width: `${(timeLeft / 30) * 100}%` }} /></div>
+      <p className="font-medium text-gray-800 mb-3">{questions[index].question}</p>
+      <div className="space-y-2">
+        {questions[index].options.map((opt, j) => (
+          <button key={j} onClick={() => handleAnswer(j)} className="w-full text-left px-4 py-3 rounded-xl text-sm border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition">
+            {opt}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function StudentDashboard({ user, onLogout }) {
   const [selectedProfessor, setSelectedProfessor] = useState(PROFESSORS[0].id);
   const [chatMessagesByProf, setChatMessagesByProf] = useState({});
@@ -695,6 +885,12 @@ function StudentDashboard({ user, onLogout }) {
   const [studentResults, setStudentResults] = useState([]);
   const [selectedResult, setSelectedResult] = useState(null);
   const [hasContext, setHasContext] = useState(false);
+  const [unreadNotifs, setUnreadNotifs] = useState(0);
+  const [gameType, setGameType] = useState("memory");
+  const [gameContent, setGameContent] = useState("");
+  const [gameTopic, setGameTopic] = useState("");
+  const [gameData, setGameData] = useState(null);
+  const [gameLoading, setGameLoading] = useState(false);
   const chatBottomRef = useRef(null);
 
   useEffect(() => { chatBottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chatMessagesByProf[selectedProfessor]]);
@@ -719,7 +915,22 @@ function StudentDashboard({ user, onLogout }) {
     try { const res = await fetch("/api/context"); const data = await res.json(); setHasContext(!!(data.text && data.text.trim())); } catch {}
   }, []);
 
-  useEffect(() => { if (activeTab === "results") loadStudentResults(); if (activeTab === "chat") checkContext(); }, [activeTab, loadStudentResults, checkContext]);
+  const loadNotifs = useCallback(async () => {
+    try { const res = await fetch(`/api/notifications?userName=${user.name}`); const data = await res.json(); setUnreadNotifs(data.length); } catch {}
+  }, [user.name]);
+
+  const markNotifRead = useCallback(async () => {
+    try { const res = await fetch(`/api/notifications?userName=${user.name}`); const data = await res.json(); for (const n of data) { await fetch("/api/notifications", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ notifId: n.id, userName: user.name }) }); } setUnreadNotifs(0); } catch {}
+  }, [user.name]);
+
+  useEffect(() => { if (activeTab === "results") loadStudentResults(); if (activeTab === "chat") checkContext(); loadNotifs(); }, [activeTab, loadStudentResults, checkContext, loadNotifs]);
+
+  const generateGame = async () => {
+    if (!gameContent.trim() || !gameTopic.trim()) return;
+    setGameLoading(true); setGameData(null);
+    try { const res = await fetch("/api/generate-game", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: gameContent, topic: gameTopic, type: gameType }) }); const data = await res.json(); setGameData(data); } catch (e) { alert("Error: " + e.message); }
+    setGameLoading(false);
+  };
 
   const chatMessages = chatMessagesByProf[selectedProfessor] || [];
 
@@ -754,6 +965,7 @@ function StudentDashboard({ user, onLogout }) {
   const tabs = [
     { id: "chat", label: "Chatbots" },
     { id: "quiz", label: "Quizzes" },
+    { id: "juegos", label: "Juegos" },
     { id: "results", label: "Mis Resultados" },
   ];
 
@@ -761,7 +973,7 @@ function StudentDashboard({ user, onLogout }) {
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       <Sidebar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
       <div className="flex-1 flex flex-col min-h-screen">
-        <DashboardHeader title="Panel de Alumno" userName={user.name} onLogout={onLogout} />
+        <DashboardHeader title="Panel de Alumno" userName={user.name} onLogout={onLogout} notifCount={unreadNotifs} onNotifClick={() => { markNotifRead(); setActiveTab("quiz"); }} />
         <main className="flex-1 p-4 md:p-6 max-w-5xl w-full mx-auto">
           <MobileNav tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -829,18 +1041,28 @@ function StudentDashboard({ user, onLogout }) {
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                   <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><TabIcon id="quiz" /> Quizzes del Docente</h2>
                   <div className="space-y-2">
-                    {availableQuizzes.map((q) => (
-                      <button key={q.id} onClick={() => startTeacherQuiz(q)} className="w-full text-left p-4 border border-gray-200 rounded-xl hover:bg-indigo-50 hover:border-indigo-300 transition flex items-center gap-3">
-                        <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center shrink-0">
-                          <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                    {availableQuizzes.map((q) => {
+                      const isExpired = q.deadline && new Date(q.deadline) < new Date();
+                      return (
+                      <button key={q.id} onClick={() => !isExpired && startTeacherQuiz(q)} className={`w-full text-left p-4 border rounded-xl transition flex items-center gap-3 ${isExpired ? "border-red-200 bg-red-50 opacity-60 cursor-not-allowed" : "border-gray-200 hover:bg-indigo-50 hover:border-indigo-300"}`}>
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isExpired ? "bg-red-100" : "bg-indigo-100"}`}>
+                          <svg className={`w-5 h-5 ${isExpired ? "text-red-400" : "text-indigo-600"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                         </div>
                         <div className="flex-1">
                           <span className="font-medium text-gray-800">{q.topic}</span>
-                          <p className="text-xs text-gray-400 mt-0.5">{new Date(q.publishedAt).toLocaleString()}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            {new Date(q.publishedAt).toLocaleString()}
+                            {q.deadline && (
+                              <span className={`ml-2 ${isExpired ? "text-red-500" : "text-orange-500"}`}>
+                                {isExpired ? "⛔ Vencido" : "⌛ " + new Date(q.deadline).toLocaleString()}
+                              </span>
+                            )}
+                          </p>
                         </div>
                         <svg className="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -885,6 +1107,43 @@ function StudentDashboard({ user, onLogout }) {
               )}
 
               {quiz?.error && <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">{quiz.error}</div>}
+            </div>
+          )}
+
+          {activeTab === "juegos" && (
+            <div className="space-y-4">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2"><TabIcon id="juegos" /> Juegos Educativos con IA</h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema</label>
+                    <input type="text" value={gameTopic} onChange={(e) => setGameTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none" placeholder="Ej: Programación en Python" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido</label>
+                    <textarea value={gameContent} onChange={(e) => setGameContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido educativo para generar el juego..." />
+                  </div>
+                  <div className="flex gap-2">
+                    {["memory", "hangman", "speed"].map((t) => (
+                      <button key={t} onClick={() => setGameType(t)} className={`px-4 py-2 rounded-xl text-sm font-medium transition ${gameType === t ? "bg-indigo-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                        {t === "memory" ? "🧠 Memoria" : t === "hangman" ? "💀 Ahorcado" : "⚡ Speed Quiz"}
+                      </button>
+                    ))}
+                  </div>
+                  <button onClick={generateGame} disabled={gameLoading || !gameContent.trim() || !gameTopic.trim()} className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{gameLoading ? "Generando..." : "Generar Juego"}</button>
+                </div>
+              </div>
+
+              {gameData?.error && <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">{gameData.error}</div>}
+
+              {gameData?.data && !gameData.error && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">{gameType === "memory" ? "🧠 Juego de Memoria" : gameType === "hangman" ? "💀 Ahorcado" : "⚡ Speed Quiz"}</h3>
+                  {gameType === "memory" && <MemoryGame pairs={gameData.data} />}
+                  {gameType === "hangman" && <HangmanGame words={gameData.data} />}
+                  {gameType === "speed" && <SpeedQuizGame questions={gameData.data} />}
+                </div>
+              )}
             </div>
           )}
 

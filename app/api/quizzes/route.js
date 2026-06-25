@@ -23,9 +23,9 @@ export async function GET() {
 }
 
 export async function POST(req) {
-  const { topic, questions } = await req.json();
+  const { topic, questions, deadline } = await req.json();
   const quizzes = await readQuizzes();
-  const quiz = { id: Date.now(), topic, questions, publishedAt: new Date().toISOString() };
+  const quiz = { id: Date.now(), topic, questions, publishedAt: new Date().toISOString(), deadline: deadline || null };
   quizzes.push(quiz);
   await writeQuizzes(quizzes);
   return new Response(JSON.stringify(quiz));

@@ -354,5 +354,72 @@
     },
     "id": 1782386419946,
     "submittedAt": "2026-06-25T11:20:19.946Z"
+  },
+  {
+    "studentName": "alumno",
+    "topic": "Introducción a Pyhton",
+    "score": 5,
+    "total": 5,
+    "questions": [
+      {
+        "question": "¿Qué lenguaje de programación es fácil de aprender y usar?",
+        "options": [
+          "Java",
+          "C++",
+          "Python",
+          "JavaScript"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "question": "¿Qué sistemas operativos puede ejecutar Python?",
+        "options": [
+          "Windows, macOS y Linux",
+          "Windows y macOS",
+          "Linux y Chrome OS",
+          "Windows y Linux"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "¿Cuál es un objetivo principal de Python?",
+        "options": [
+          "Crear aplicaciones de videojuegos",
+          "Desarrollar inteligencia artificial y analizar datos",
+          "Crear sitios web dinámicos",
+          "Realizar tareas de oficina"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Quién creó el lenguaje de programación Python?",
+        "options": [
+          "Bill Gates",
+          "Guido van Rossum",
+          "Steve Jobs",
+          "Linus Torvalds"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "question": "¿Qué hace el código `print('Hola, mundo')` en Python?",
+        "options": [
+          "Crea un archivo de texto con el mensaje",
+          "Muestra el texto 'Hola, mundo' en la pantalla",
+          "Realiza una división matemática",
+          "Crea una variable con el valor 'Hola, mundo'"
+        ],
+        "correctIndex": 1
+      }
+    ],
+    "userAnswers": {
+      "0": 2,
+      "1": 0,
+      "2": 1,
+      "3": 1,
+      "4": 1
+    },
+    "id": 1782389664782,
+    "submittedAt": "2026-06-25T12:14:24.782Z"
   }
 ]
