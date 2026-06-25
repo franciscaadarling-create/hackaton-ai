@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TicQuiz IA - Presentación</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f3f4f6;
+    color: #1f2937;
+  }
+  .slide {
+    width: 100%;
+    max-width: 1000px;
+    margin: 20px auto;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 60px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .slide:first-child {
+    background: linear-gradient(135deg, #0C043F 0%, #e71367 100%);
+    color: white;
+    text-align: center;
+    padding: 100px 60px;
+  }
+  .slide:first-child h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+  .slide:first-child p {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .slide:first-child .logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 30px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+  h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0C043F;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h2 .icon { font-size: 1.8rem; }
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #e71367;
+    margin-bottom: 8px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+  .card {
+    background: #f9fafb;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e5e7eb;
+  }
+  .card .emoji { font-size: 2rem; margin-bottom: 10px; display: block; }
+  .card p { font-size: 0.95rem; line-height: 1.6; color: #4b5563; }
+  .badge {
+    display: inline-block;
+    background: #0C043F;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  ul { list-style: none; }
+  ul li {
+    padding: 8px 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #4b5563;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  ul li::before {
+    content: "→";
+    color: #e71367;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .footer-note {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 0.85rem;
+    color: #9ca3af;
+    text-align: center;
+  }
+  @media print {
+    body { background: white; }
+    .slide {
+      box-shadow: none;
+      border: 1px solid #e5e7eb;
+      margin: 0 auto;
+      border-radius: 0;
+      page-break-after: always;
+    }
+    .slide:first-child { border-radius: 0; }
+  }
+  @media (max-width: 768px) {
+    .slide { padding: 30px 20px; }
+    .slide:first-child { padding: 60px 20px; }
+    .slide:first-child h1 { font-size: 2.5rem; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <div class="logo">🤖</div>
+  <h1>TicQuiz IA</h1>
+  <p>Plataforma Educativa con Inteligencia Artificial<br>Potenciada por Groq AI</p>
+  <div style="margin-top: 40px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+    <span class="badge" style="background: rgba(255,255,255,0.2);">Docentes</span>
+    <span class="badge" style="background: rgba(255,255,255,0.2);">Alumnos</span>
+    <span class="badge" style="background: rgba(255,255,255,0.2);">IA Generativa</span>
+    <span class="badge" style="background: rgba(255,255,255,0.2);">Quizzes</span>
+    <span class="badge" style="background: rgba(255,255,255,0.2);">Chatbots</span>
+    <span class="badge" style="background: rgba(255,255,255,0.2);">Juegos</span>
+  </div>
+</div>
+
+<div class="slide">
+  <h2><span class="icon">🎯</span> ¿Qué es TicQuiz IA?</h2>
+  <div class="grid-2">
+    <div class="card">
+      <span class="emoji">🤖</span>
+      <h3>Chatbots con IA</h3>
+      <p>4 profesores virtuales con personalidades únicas: Shulian (Programación), Darío (Hardware), Pau (TIMI) e Ivo (Redes). Cada uno especializado en su materia.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">📝</span>
+      <h3>Quizzes Inteligentes</h3>
+      <p>Generación automática de preguntas de opción múltiple a partir de cualquier contenido educativo. Configurable de 1 a 20 preguntas.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">📄</span>
+      <h3>Subida de Archivos</h3>
+      <p>Soporte para .txt, .pdf e imágenes con OCR. El contenido se extrae automáticamente para generar quizzes o alimentar los chatbots.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🎮</span>
+      <h3>Juegos Educativos</h3>
+      <p>Juego de Memoria, Ahorcado y Sopa de Letras. Todos generados por IA con el contenido de la materia.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2><span class="icon">👨‍🏫</span> Panel del Docente</h2>
+  <div class="grid-2">
+    <div>
+      <h3>📋 Contenido</h3>
+      <ul>
+        <li>Subir archivos (.txt, .pdf, imágenes)</li>
+        <li>Importar texto desde URLs (Google Docs, web)</li>
+        <li>Guardar contenido temático</li>
+      </ul>
+
+      <h3 style="margin-top: 20px;">📚 Contexto Compartido</h3>
+      <ul>
+        <li>Material del curso que los chatbots usan como referencia</li>
+        <li>Importar desde URL o pegar texto manualmente</li>
+        <li>Indicador visible para alumnos cuando hay contexto activo</li>
+      </ul>
+
+      <h3 style="margin-top: 20px;">📊 Resultados</h3>
+      <ul>
+        <li>Ver resultados de todos los alumnos</li>
+        <li>Notificaciones de quizzes completados y vencidos</li>
+        <li>Detalle de respuestas correctas/incorrectas</li>
+      </ul>
+    </div>
+    <div>
+      <h3>❓ Quizzes</h3>
+      <ul>
+        <li>Generar quizzes con IA desde contenido propio</li>
+        <li>Seleccionar contenido guardado como base</li>
+        <li>Configurar cantidad de preguntas (1-20)</li>
+        <li>Asignar <strong>Curso</strong> (3ro, 4to, 5to) — obligatorio</li>
+        <li>Asignar <strong>Materia</strong> (Hardware, Software, Redes, TIMI) — obligatorio</li>
+        <li>Fecha límite de entrega opcional</li>
+        <li>Publicar para todos los alumnos del curso</li>
+      </ul>
+
+      <h3 style="margin-top: 20px;">💬 Chatbots</h3>
+      <ul>
+        <li>Conversar con los 4 profesores IA</li>
+        <li>Chats separados por profesor</li>
+        <li>Historial persistente por usuario</li>
+        <li>Soporte de Markdown en respuestas</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2><span class="icon">🎓</span> Panel del Alumno</h2>
+  <div class="grid-2">
+    <div>
+      <h3>💬 Chatbots</h3>
+      <ul>
+        <li>Conversar con profesores IA por materia</li>
+        <li>Indicador de contexto activo del curso</li>
+        <li>El chatbot usa el material del docente como referencia</li>
+        <li>Detección automática de URLs en mensajes</li>
+      </ul>
+
+      <h3 style="margin-top: 20px;">❓ Quizzes</h3>
+      <ul>
+        <li>Filtrar por <strong>Curso</strong> (3ro, 4to, 5to)</li>
+        <li>Filtrar por <strong>Materia</strong> (Hardware, Software, Redes, TIMI)</li>
+        <li>Resolver quizzes publicados por el docente</li>
+        <li>Generar quizzes de práctica propios</li>
+        <li>Resultados enviados automáticamente al docente</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎮 Juegos</h3>
+      <ul>
+        <li><strong>Memoria:</strong> Emparejar conceptos con definiciones</li>
+        <li><strong>Ahorcado:</strong> Adivinar palabras con pistas</li>
+        <li><strong>Sopa de Letras:</strong> Encontrar palabras en la grilla</li>
+        <li>Contenido generado por IA según la materia</li>
+      </ul>
+
+      <h3 style="margin-top: 20px;">🎬 Reels Educativos</h3>
+      <ul>
+        <li>Formato vertical tipo YouTube Shorts / TikTok</li>
+        <li>8 reels generados por IA con el contenido del curso</li>
+        <li>Audio narrado automáticamente (Web Speech API)</li>
+        <li>Diferentes esquemas de color por reel</li>
+        <li>Scroll vertical con puntos de navegación</li>
+      </ul>
+
+      <h3 style="margin-top: 20px;">📊 Mis Resultados</h3>
+      <ul>
+        <li>Historial de quizzes completados</li>
+        <li>Puntaje y porcentaje por intento</li>
+        <li>Revisión detallada pregunta por pregunta</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2><span class="icon">⚙️</span> Características Técnicas</h2>
+  <div class="grid-3">
+    <div class="card">
+      <span class="emoji">🧠</span>
+      <h3>Groq AI</h3>
+      <p>Modelo llama-3.1-8b-instant para generación de quizzes, respuestas de chatbots, juegos y reels. Rápido y eficiente.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🔐</span>
+      <h3>Autenticación</h3>
+      <p>Registro con códigos especiales (DOCENTE2024 / ALUMNO2024). Perfiles con curso seleccionable (3ro/4to/5to).</p>
+    </div>
+    <div class="card">
+      <span class="emoji">💾</span>
+      <h3>Persistencia</h3>
+      <p>Datos guardados en archivos JSON: usuarios, quizzes, resultados, historial de chat, notificaciones y contexto.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🔍</span>
+      <h3>OCR</h3>
+      <p>Extracción de texto de imágenes mediante Tesseract.js. Soporte para .txt, .pdf y formatos de imagen.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🎨</span>
+      <h3>Markdown</h3>
+      <p>Los chatbots responden con formato Markdown: negrita, listas, bloques de código con resaltado de sintaxis, enlaces.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🔔</span>
+      <h3>Notificaciones</h3>
+      <p>Sistema de notificaciones para quizzes completados, vencidos y nuevas tareas con plazo límite.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2><span class="icon">👥</span> Roles y Acceso</h2>
+  <div class="grid-2">
+    <div class="card" style="border-left: 4px solid #0C043F;">
+      <span class="emoji">👨‍🏫</span>
+      <h3>Docente</h3>
+      <p style="margin-top: 8px;"><strong>Credenciales demo:</strong> docente / docente123</p>
+      <ul style="margin-top: 12px;">
+        <li>Gestionar contenido educativo</li>
+        <li>Publicar quizzes con curso, materia y plazo</li>
+        <li>Ver resultados y notificaciones de alumnos</li>
+        <li>Configurar contexto para chatbots</li>
+        <li>Chatear con profesores IA</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left: 4px solid #e71367;">
+      <span class="emoji">🎓</span>
+      <h3>Alumno</h3>
+      <p style="margin-top: 8px;"><strong>Credenciales demo:</strong> alumno / alumno123</p>
+      <ul style="margin-top: 12px;">
+        <li>Seleccionar su curso (3ro/4to/5to)</li>
+        <li>Filtrar quizzes por curso y materia</li>
+        <li>Resolver quizzes del docente y de práctica</li>
+        <li>Jugar juegos educativos generados por IA</li>
+        <li>Ver reels educativos con audio</li>
+        <li>Chatear con profesores IA</li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 16px; border: 1px solid #f59e0b;">
+    <p style="font-weight: 600; color: #92400e;">💡 Los códigos de registro son internos. Los alumnos existentes pueden cambiar su curso desde el panel de quizzes.</p>
+  </div>
+</div>
+
+<div class="slide">
+  <h2><span class="icon">🖥️</span> Tecnologías Utilizadas</h2>
+  <div class="grid-3">
+    <div class="card">
+      <span class="emoji">⚛️</span>
+      <h3>Next.js 14</h3>
+      <p>Framework React con App Router. API routes para todas las funcionalidades del backend.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🎨</span>
+      <h3>Tailwind CSS v4</h3>
+      <p>Estilos utilitarios con configuración vía CSS (@import "tailwindcss"). Diseño responsive.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🧠</span>
+      <h3>Groq SDK</h3>
+      <p>API de inferencia rápida con modelo llama-3.1-8b-instant para todas las funciones de IA.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">📝</span>
+      <h3>react-markdown</h3>
+      <p>Renderizado de Markdown con remark-gfm para tablas, listas y formato en chats.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🔍</span>
+      <h3>Tesseract.js</h3>
+      <p>Reconocimiento óptico de caracteres (OCR) para extraer texto de imágenes subidas.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">📄</span>
+      <h3>pdf-parse</h3>
+      <p>Extracción de texto desde archivos PDF para procesamiento educativo.</p>
+    </div>
+  </div>
+  <div style="margin-top: 24px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+    <span class="badge">JavaScript</span>
+    <span class="badge">React</span>
+    <span class="badge">Node.js</span>
+    <span class="badge">Web Speech API</span>
+    <span class="badge">JSON Persistence</span>
+    <span class="badge">ESM Modules</span>
+  </div>
+</div>
+
+<div class="slide" style="text-align: center;">
+  <div style="font-size: 4rem; margin-bottom: 20px;">🚀</div>
+  <h2 style="justify-content: center; margin-bottom: 16px;">¡Gracias!</h2>
+  <p style="font-size: 1.2rem; color: #4b5563; max-width: 500px; margin: 0 auto; line-height: 1.6;">
+    TicQuiz IA — Una plataforma educativa potenciada por inteligencia artificial para transformar la forma de enseñar y aprender.
+  </p>
+  <div class="footer-note" style="border: none; margin-top: 40px;">
+    <p style="color: #9ca3af;">Generado el 25 de junio de 2026</p>
+  </div>
+</div>
+
+</body>
+</html>

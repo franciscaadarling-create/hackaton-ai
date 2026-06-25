@@ -131,7 +131,7 @@ function Login({ onLogin }) {
           <div className="mx-auto w-20 h-20 mb-4">
             <img src="/logo/images.png" alt="EduQuiz AI" className="w-full h-full object-contain drop-shadow-lg" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#0C043F] to-[#e71367] bg-clip-text text-transparent">TicQuiz IA</h1>
+          <h1 className="text-3xl font-bold text-black">TicQuiz IA</h1>
           <p className="text-gray-500 mt-1">Plataforma Educativa con Inteligencia Artificial</p>
         </div>
 
@@ -149,7 +149,7 @@ function Login({ onLogin }) {
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Usuario</label>
             <div className="relative">
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none transition" placeholder={role === "teacher" ? "docente" : "alumno"} required />
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" placeholder={role === "teacher" ? "docente" : "alumno"} required />
             </div>
           </div>
 
@@ -157,7 +157,7 @@ function Login({ onLogin }) {
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Contraseña</label>
             <div className="relative">
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none transition" placeholder="••••••" required />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" placeholder="••••••" required />
             </div>
           </div>
 
@@ -166,14 +166,14 @@ function Login({ onLogin }) {
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Código de registro</label>
               <div className="relative">
                 <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                <input type="text" value={code} onChange={(e) => setCode(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none transition" placeholder={role === "teacher" ? "Código de docente" : "Código de alumno"} />
+                <input type="text" value={code} onChange={(e) => setCode(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" placeholder={role === "teacher" ? "Código de docente" : "Código de alumno"} />
               </div>
             </div>
           )}
 
           {error && <p className="text-red-500 text-sm text-center bg-red-50 py-2 rounded-lg">{error}</p>}
 
-          <button type="submit" disabled={registering} className="w-full bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white py-2.5 rounded-xl font-semibold hover:from-[#0C043F]/90 hover:to-[#e71367]/90 transition shadow-lg shadow-[#e71367]/20 disabled:opacity-50">
+          <button type="submit" disabled={registering} className="w-full bg-[#0C043F] text-white py-2.5 rounded-xl font-semibold hover:bg-[#0C043F]/90 transition shadow-lg disabled:opacity-50">
             {registering ? "Registrando..." : isRegister ? "Registrarse" : "Iniciar Sesión"}
           </button>
         </form>
@@ -436,7 +436,7 @@ function TeacherDashboard({ user, onLogout }) {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema / Título</label>
-                  <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder="Ej: Introducción a Python" />
+                  <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" placeholder="Ej: Introducción a Python" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Archivo (.txt, .pdf, .png, .jpg)</label>
@@ -452,7 +452,7 @@ function TeacherDashboard({ user, onLogout }) {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido</label>
-                  <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={8} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y" placeholder="Escribe, pega o sube un archivo (.txt, .pdf, imagen) con el contenido educativo..." />
+                  <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={8} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y" placeholder="Escribe, pega o sube un archivo (.txt, .pdf, imagen) con el contenido educativo..." />
                 </div>
                 <button onClick={saveContent} className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-green-600 hover:to-emerald-700 transition shadow-sm">Guardar Contenido</button>
                 {savedContentList.length > 0 && (
@@ -491,14 +491,14 @@ function TeacherDashboard({ user, onLogout }) {
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Importar desde URL (Google Docs, páginas web)</label>
                   <div className="flex gap-2">
-                    <input type="url" value={contextUrl} onChange={(e) => setContextUrl(e.target.value)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder="https://docs.google.com/document/d/..." />
+                    <input type="url" value={contextUrl} onChange={(e) => setContextUrl(e.target.value)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" placeholder="https://docs.google.com/document/d/..." />
                     <button onClick={fetchUrl} disabled={fetchingUrl || !contextUrl.trim()} className="bg-[#0C043F] text-white px-4 py-2.5 rounded-xl font-medium hover:bg-[#0C043F]/90 disabled:opacity-50 transition text-sm whitespace-nowrap">{fetchingUrl ? "Importando..." : "Importar"}</button>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido de contexto (editable)</label>
-                  <textarea value={contextText} onChange={(e) => setContextText(e.target.value)} rows={12} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y font-mono text-sm" placeholder="Agrega aquí el material del curso que los chatbots deben conocer. Puedes pegar texto, importar desde URL o agregar contenido guardado." />
+                  <textarea value={contextText} onChange={(e) => setContextText(e.target.value)} rows={12} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y font-mono text-sm" placeholder="Agrega aquí el material del curso que los chatbots deben conocer. Puedes pegar texto, importar desde URL o agregar contenido guardado." />
                 </div>
 
                 <button onClick={saveContext} className="mt-4 bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white px-6 py-2.5 rounded-xl font-medium hover:from-[#0C043F]/90 hover:to-[#e71367]/90 transition shadow-sm">Guardar Contexto</button>
@@ -525,15 +525,15 @@ function TeacherDashboard({ user, onLogout }) {
                 <div className="space-y-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema (manual)</label>
-                    <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder={selectedContentIds.length > 0 ? "O usa el tema de los contenidos seleccionados" : "Ej: Introducción a Python"} />
+                    <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" placeholder={selectedContentIds.length > 0 ? "O usa el tema de los contenidos seleccionados" : "Ej: Introducción a Python"} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido (manual)</label>
-                    <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y" placeholder={selectedContentIds.length > 0 ? "O escribe contenido adicional aquí..." : "Escribe contenido aquí..."} />
+                    <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y" placeholder={selectedContentIds.length > 0 ? "O escribe contenido adicional aquí..." : "Escribe contenido aquí..."} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Cantidad de preguntas</label>
-                    <input type="number" value={questionCount} onChange={(e) => setQuestionCount(Math.max(1, parseInt(e.target.value) || 5))} min={1} max={20} className="w-24 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" />
+                    <input type="number" value={questionCount} onChange={(e) => setQuestionCount(Math.max(1, parseInt(e.target.value) || 5))} min={1} max={20} className="w-24 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" />
                   </div>
                 </div>
                 <button onClick={generateQuiz} disabled={loading} className="mt-4 bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white px-6 py-2.5 rounded-xl font-medium hover:from-[#0C043F]/90 hover:to-[#e71367]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{loading ? "Generando..." : "Generar Quiz"}</button>
@@ -546,7 +546,7 @@ function TeacherDashboard({ user, onLogout }) {
                   <div className="mt-4 grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-gray-600">Curso</label>
-                      <select value={quizLevel} onChange={(e) => setQuizLevel(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none text-sm">
+                      <select value={quizLevel} onChange={(e) => setQuizLevel(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm">
                         <option value="3ro">3ro</option>
                         <option value="4to">4to</option>
                         <option value="5to">5to</option>
@@ -554,7 +554,7 @@ function TeacherDashboard({ user, onLogout }) {
                     </div>
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-gray-600">Materia</label>
-                      <select value={quizSubject} onChange={(e) => setQuizSubject(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none text-sm">
+                      <select value={quizSubject} onChange={(e) => setQuizSubject(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm">
                         <option value="Hardware">Hardware</option>
                         <option value="Software">Software</option>
                         <option value="Redes">Redes</option>
@@ -564,7 +564,7 @@ function TeacherDashboard({ user, onLogout }) {
                   </div>
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-600">Fecha límite (opcional)</label>
-                    <input type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none text-sm" />
+                    <input type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm" />
                   </div>
                   <button onClick={publishQuiz} disabled={publishing} className="mt-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-2.5 rounded-xl font-medium hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 transition shadow-sm">{publishing ? "Publicando..." : "Publicar Quiz para Alumnos"}</button>
                 </div>
@@ -644,7 +644,7 @@ function TeacherDashboard({ user, onLogout }) {
               </div>
               <form onSubmit={sendChatMessage} className="p-4 border-t border-gray-100 bg-gray-50/50">
                 <div className="flex gap-2">
-                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none bg-white text-sm" placeholder={`Pregúntale a ${PROFESSORS.find((p) => p.id === selectedProfessor)?.name}...`} />
+                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white text-sm" placeholder={`Pregúntale a ${PROFESSORS.find((p) => p.id === selectedProfessor)?.name}...`} />
                   <button type="submit" disabled={!chatInput.trim()} className="bg-[#0C043F] text-white px-5 py-3 rounded-xl font-medium hover:bg-[#0C043F]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm flex items-center gap-1.5">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                     Enviar
@@ -1263,7 +1263,7 @@ function StudentDashboard({ user, onLogout }) {
               </div>
               <form onSubmit={sendChatMessage} className="p-4 border-t border-gray-100 bg-gray-50/50">
                 <div className="flex gap-2">
-                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none bg-white text-sm" placeholder={`Pregúntale a ${PROFESSORS.find((p) => p.id === selectedProfessor)?.name}...`} />
+                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white text-sm" placeholder={`Pregúntale a ${PROFESSORS.find((p) => p.id === selectedProfessor)?.name}...`} />
                   <button type="submit" disabled={!chatInput.trim()} className="bg-[#0C043F] text-white px-5 py-3 rounded-xl font-medium hover:bg-[#0C043F]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm flex items-center gap-1.5">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                     Enviar
@@ -1336,15 +1336,15 @@ function StudentDashboard({ user, onLogout }) {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema</label>
-                      <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder="Ej: Programación en Python" />
+                      <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" placeholder="Ej: Programación en Python" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido a evaluar</label>
-                      <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={6} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido que quieres practicar..." />
+                      <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={6} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido que quieres practicar..." />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-600 mb-1.5">Cantidad de preguntas</label>
-                      <input type="number" value={questionCount} onChange={(e) => setQuestionCount(Math.max(1, parseInt(e.target.value) || 5))} min={1} max={20} className="w-24 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" />
+                      <input type="number" value={questionCount} onChange={(e) => setQuestionCount(Math.max(1, parseInt(e.target.value) || 5))} min={1} max={20} className="w-24 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" />
                     </div>
                     <button onClick={generateQuiz} disabled={loading || !content.trim() || !topic.trim()} className="bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white px-6 py-2.5 rounded-xl font-medium hover:from-[#0C043F]/90 hover:to-[#e71367]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{loading ? "Generando..." : "Generar Quiz"}</button>
                   </div>
@@ -1381,11 +1381,11 @@ function StudentDashboard({ user, onLogout }) {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema</label>
-                      <input type="text" value={reelsTopic} onChange={(e) => setReelsTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder="Ej: Redes de computadoras" />
+                      <input type="text" value={reelsTopic} onChange={(e) => setReelsTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" placeholder="Ej: Redes de computadoras" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido</label>
-                      <textarea value={reelsContent} onChange={(e) => setReelsContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido educativo para generar los reels..." />
+                      <textarea value={reelsContent} onChange={(e) => setReelsContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido educativo para generar los reels..." />
                     </div>
                     <button onClick={generateReels} disabled={reelsLoading || !reelsContent.trim() || !reelsTopic.trim()} className="bg-gradient-to-r from-[#0C043F] to-[#e71367] text-white px-6 py-2.5 rounded-xl font-medium hover:from-[#0C043F]/90 hover:to-[#e71367]/90 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">{reelsLoading ? "Generando..." : "Generar Reels"}</button>
                   </div>
@@ -1465,11 +1465,11 @@ function StudentDashboard({ user, onLogout }) {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Tema</label>
-                    <input type="text" value={gameTopic} onChange={(e) => setGameTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none" placeholder="Ej: Programación en Python" />
+                    <input type="text" value={gameTopic} onChange={(e) => setGameTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" placeholder="Ej: Programación en Python" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1.5">Contenido</label>
-                    <textarea value={gameContent} onChange={(e) => setGameContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e71367] focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido educativo para generar el juego..." />
+                    <textarea value={gameContent} onChange={(e) => setGameContent(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y" placeholder="Escribe el contenido educativo para generar el juego..." />
                   </div>
                   <div className="flex gap-2">
                     {["memory", "hangman", "wordsearch"].map((t) => (

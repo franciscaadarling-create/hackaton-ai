@@ -10,7 +10,8 @@
       "alumno",
       "melina_biegun",
       "agustina_romano",
-      "meli_biegun"
+      "meli_biegun",
+      "francisca_bauer"
     ]
   },
   {
@@ -24,7 +25,8 @@
       "alumno",
       "melina_biegun",
       "agustina_romano",
-      "meli_biegun"
+      "meli_biegun",
+      "francisca_bauer"
     ]
   },
   {
@@ -110,7 +112,8 @@
     "id": 1782394190302,
     "createdAt": "2026-06-25T13:29:50.302Z",
     "readBy": [
-      "meli_biegun"
+      "meli_biegun",
+      "francisca_bauer"
     ],
     "quizId": 1782394190037,
     "topic": "qué es el módelo osi",
