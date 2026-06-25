@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 function MarkdownMessage({ content, isUser }) {
   return (
@@ -10,12 +12,27 @@ function MarkdownMessage({ content, isUser }) {
       remarkPlugins={[remarkGfm]}
       components={{
         p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
-        code: ({ node, inline, className, children, ...props }) =>
-          inline ? (
-            <code className={`text-xs rounded px-1 py-0.5 ${isUser ? "bg-white/20" : "bg-black/10"}`}>{children}</code>
-          ) : (
-            <pre className={`text-xs rounded-lg p-3 my-2 overflow-x-auto ${isUser ? "bg-white/20" : "bg-black/10"}`}><code>{children}</code></pre>
-          ),
+        code: ({ node, inline, className, children, ...props }) => {
+          const match = /language-(\w+)/.exec(className || "");
+          if (inline) {
+            return <code className={`text-xs rounded px-1 py-0.5 ${isUser ? "bg-white/20" : "bg-black/10"}`}>{children}</code>;
+          }
+          if (match) {
+            return (
+              <div className="my-2 rounded-lg overflow-hidden border border-gray-700">
+                <div className="text-[10px] px-3 py-1 bg-gray-900 text-gray-400 font-mono border-b border-gray-700">{match[1]}</div>
+                <SyntaxHighlighter language={match[1]} style={oneDark} customStyle={{ margin: 0, fontSize: "0.75rem", borderRadius: 0 }} PreTag="div">
+                  {String(children).replace(/\n$/, "")}
+                </SyntaxHighlighter>
+              </div>
+            );
+          }
+          return (
+            <pre className={`text-xs rounded-lg p-3 my-2 overflow-x-auto ${isUser ? "bg-white/20" : "bg-gray-900"}`}>
+              <code>{children}</code>
+            </pre>
+          );
+        },
         ul: ({ children }) => <ul className="list-disc ml-4 mb-1 space-y-0.5">{children}</ul>,
         ol: ({ children }) => <ol className="list-decimal ml-4 mb-1 space-y-0.5">{children}</ol>,
         li: ({ children }) => <li className="leading-relaxed">{children}</li>,
@@ -41,10 +58,10 @@ function MarkdownMessage({ content, isUser }) {
 }
 
 const PROFESSORS = [
-  { id: "software", name: "Shulian", subject: "Programación", style: "inteligente, serio, brainrot. JavaScript, TypeScript, HTML y CSS", avatar: "/shuli.png" },
-  { id: "hardware", name: "Darío", subject: "Hardware", style: "un poco viejo, inteligente, muy argentino. Componentes PC, sistemas numéricos, circuitos eléctricos y Arduino", avatar: "/daro.png" },
-  { id: "timi", name: "Pau", subject: "TIMI", style: "buena onda, tranquila. Figma y Tinkercad", avatar: "/pau.png" },
-  { id: "redes", name: "Ivo", subject: "Redes", style: "gracioso, explica con historias, amigable. Redes informáticas, ciberseguridad, modelo OSI", avatar: "/ivo.png" },
+  { id: "software", name: "Shulian", subject: "Programación", style: "inteligente, serio, brainrot. JavaScript, TypeScript, HTML y CSS", avatar: "/avatares/avatar_shuli.PNG", pfp: "/pfp/pfp_shuli.png" },
+  { id: "hardware", name: "Darío", subject: "Hardware", style: "un poco viejo, inteligente, muy argentino. Componentes PC, sistemas numéricos, circuitos eléctricos y Arduino", avatar: "/avatares/avatar_daro.PNG", pfp: "/pfp/pfp_daro.png" },
+  { id: "timi", name: "Pau", subject: "TIMI", style: "buena onda, tranquila. Figma y Tinkercad", avatar: "/avatares/avatar_pau.PNG", pfp: "/pfp/pfp_pau.png" },
+  { id: "redes", name: "Ivo", subject: "Redes", style: "gracioso, explica con historias, amigable. Redes informáticas, ciberseguridad, modelo OSI", avatar: "/avatares/avatar_ivo.PNG", pfp: "/pfp/pfp_ivo.png" },
 ];
 
 function TabIcon({ id }) {
@@ -501,7 +518,7 @@ function TeacherDashboard({ user, onLogout }) {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-[calc(100vh-12rem)]">
               <div className="p-4 border-b border-gray-100">
                 <div className="flex items-center gap-3 mb-3">
-                  <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.avatar} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-10 h-10 rounded-xl object-cover shadow-sm shrink-0" />
+                  <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.pfp} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-10 h-10 rounded-xl object-cover shadow-sm shrink-0" />
                   <div>
                     <h2 className="text-lg font-semibold text-gray-800">{PROFESSORS.find((p) => p.id === selectedProfessor)?.name}</h2>
                     <p className="text-xs text-gray-400">{PROFESSORS.find((p) => p.id === selectedProfessor)?.subject}</p>
@@ -521,10 +538,8 @@ function TeacherDashboard({ user, onLogout }) {
               </div>
               <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={chatEndRef}>
                 {chatMessages.length === 0 && (
-                  <div className="text-center pt-10">
-                    <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                      <svg className="w-8 h-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-                    </div>
+                  <div className="text-center pt-6">
+                    <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.avatar} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-32 h-32 mx-auto mb-4 object-contain" />
                     <p className="text-gray-400 text-sm">Inicia una conversación con {PROFESSORS.find((p) => p.id === selectedProfessor)?.name}</p>
                     <p className="text-gray-300 text-xs mt-1">Pregunta sobre {PROFESSORS.find((p) => p.id === selectedProfessor)?.subject.toLowerCase()}</p>
                   </div>
@@ -532,7 +547,7 @@ function TeacherDashboard({ user, onLogout }) {
                 {chatMessages.map((msg, i) => (
                   <div key={i} className={`flex items-end gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                     {msg.role === "assistant" && (
-                      <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.avatar} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-8 h-8 rounded-full object-cover shadow-sm shrink-0" />
+                      <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.pfp} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-8 h-8 rounded-full object-cover shadow-sm shrink-0" />
                     )}
                     <div className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user" ? "bg-indigo-600 text-white rounded-br-md shadow-sm" : "bg-gray-50 text-gray-800 rounded-tl-md border border-gray-100 shadow-sm"}`}>
                       <MarkdownMessage content={msg.content} isUser={msg.role === "user"} />
@@ -754,7 +769,7 @@ function StudentDashboard({ user, onLogout }) {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-[calc(100vh-12rem)]">
               <div className="p-4 border-b border-gray-100">
                 <div className="flex items-center gap-3 mb-3">
-                  <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.avatar} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-10 h-10 rounded-xl object-cover shadow-sm shrink-0" />
+                  <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.pfp} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-10 h-10 rounded-xl object-cover shadow-sm shrink-0" />
                   <div>
                     <h2 className="text-lg font-semibold text-gray-800">{PROFESSORS.find((p) => p.id === selectedProfessor)?.name}</h2>
                     <p className="text-xs text-gray-400">{PROFESSORS.find((p) => p.id === selectedProfessor)?.subject}</p>
@@ -775,10 +790,8 @@ function StudentDashboard({ user, onLogout }) {
               </div>
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {chatMessages.length === 0 && (
-                  <div className="text-center pt-10">
-                    <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                      <svg className="w-8 h-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-                    </div>
+                  <div className="text-center pt-6">
+                    <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.avatar} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-32 h-32 mx-auto mb-4 object-contain" />
                     <p className="text-gray-400 text-sm">Pregúntale a {PROFESSORS.find((p) => p.id === selectedProfessor)?.name}</p>
                     <p className="text-gray-300 text-xs mt-1">Sobre {PROFESSORS.find((p) => p.id === selectedProfessor)?.subject.toLowerCase()}</p>
                   </div>
@@ -786,7 +799,7 @@ function StudentDashboard({ user, onLogout }) {
                 {chatMessages.map((msg, i) => (
                   <div key={i} className={`flex items-end gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                     {msg.role === "assistant" && (
-                      <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.avatar} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-8 h-8 rounded-full object-cover shadow-sm shrink-0" />
+                      <img src={PROFESSORS.find((p) => p.id === selectedProfessor)?.pfp} alt={PROFESSORS.find((p) => p.id === selectedProfessor)?.name} className="w-8 h-8 rounded-full object-cover shadow-sm shrink-0" />
                     )}
                     <div className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user" ? "bg-indigo-600 text-white rounded-br-md shadow-sm" : "bg-gray-50 text-gray-800 rounded-tl-md border border-gray-100 shadow-sm"}`}>
                       <MarkdownMessage content={msg.content} isUser={msg.role === "user"} />
