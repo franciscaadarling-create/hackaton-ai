@@ -156,7 +156,7 @@ function TeacherDashboard({ user, onLogout }) {
         body: JSON.stringify({ messages: newMessages, expert: selectedProfessor }),
       });
       const data = await res.json();
-      setChatMessages([...newMessages, { role: "assistant", content: data.text }]);
+      setChatMessages([...newMessages, { role: "assistant", content: data.text || data.error || "Error desconocido" }]);
     } catch {
       setChatMessages([...newMessages, { role: "assistant", content: "Error al conectar con el chatbot." }]);
     }
@@ -413,7 +413,7 @@ function StudentDashboard({ user, onLogout }) {
         body: JSON.stringify({ messages: newMessages, expert: selectedProfessor }),
       });
       const data = await res.json();
-      setChatMessages([...newMessages, { role: "assistant", content: data.text }]);
+      setChatMessages([...newMessages, { role: "assistant", content: data.text || data.error || "Error desconocido" }]);
     } catch {
       setChatMessages([...newMessages, { role: "assistant", content: "Error al conectar con el chatbot." }]);
     }
